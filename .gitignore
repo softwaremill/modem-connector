@@ -1,17 +1,45 @@
 *.class
 *.log
 
+# IntelliJ IDEA specific
+.idea
+
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
+
 # sbt specific
-.cache
-.history
+.cache/
+.history/
 .lib/
-dist/*
 target/
+.sbtserver
 lib_managed/
 src_managed/
 project/boot/
 project/plugins/project/
 
-# Scala-IDE specific
-.scala_dependencies
-.worksheet
+# npm specific
+**/node_modules/*
+
+# webpack specific
+**/dist/*
+
+logs
+project/project
+project/target
+target
+tmp
+.history
+.cache
+dist
+bin
+/.idea
+/*.iml
+/out
+/.idea_modules
+/.classpath
+/.project
+/RUNNING_PID
+/.settings
+/.target
