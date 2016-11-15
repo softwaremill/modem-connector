@@ -1,15 +1,28 @@
-name := """minimal-akka-scala-seed"""
+import sbt._
+import sbt.Keys._
 
-version := "1.0"
+def haltOnCmdResultError(result: => Int) = if (result != 0) {
+  throw new Exception("Build failed.")
+}
 
-scalaVersion := "2.11.6"
+import Dependencies._
 
-libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.3.11",
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0",
-  "com.typesafe" % "config" % "1.3.1",
-  "com.typesafe.akka" %% "akka-testkit" % "2.3.11" % "test",
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test")
+lazy val commonSettings = Seq(
+  organization := "com.softwaremill",
+  version := "0.0.1-SNAPSHOT",
+  scalaVersion := "2.11.8",
+  resolvers ++= commonResolvers
+) ++ Revolver.settings
 
 
-fork in run := true
+lazy val root = (project in file("."))
+  .settings(commonSettings: _*)
+  .settings(
+    name := "pwsat-modem",
+    scalaSource in Compile := baseDirectory.value / "src/main",
+    scalaSource in Test := baseDirectory.value / "src/test",
+    libraryDependencies ++= coreDependencies ++ testDependencies,
+    mainClass in Compile := Some("com.example.ApplicationMain"),
+    assemblyJarName in assembly := "pwsat-modem-lib.jar",
+    fork := true
+  )
