@@ -19,8 +19,8 @@ lazy val root = (project in file("."))
   .settings(commonSettings: _*)
   .settings(
     name := "pwsat-modem",
-    scalaSource in Compile := baseDirectory.value / "src/main",
-    scalaSource in Test := baseDirectory.value / "src/test",
+    scalaSource in Compile := baseDirectory.value / "src/main/scala",
+    scalaSource in Test := baseDirectory.value / "src/test/scala",
     libraryDependencies ++= coreDependencies ++ testDependencies,
     mainClass in Compile := Some("com.example.ApplicationMain"),
     assemblyJarName in assembly := "pwsat-modem-lib.jar",
