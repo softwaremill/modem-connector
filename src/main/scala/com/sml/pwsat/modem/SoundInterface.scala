@@ -6,7 +6,6 @@ import javax.sound.sampled._
 import com.sml.pwsat.modem.SoundInterfaceType.SoundInterfaceType
 import com.typesafe.scalalogging.LazyLogging
 
-
 trait SoundInterface extends LazyLogging {
   val sampleRate: Int = 9600
   val sampleSizeInBits: Int = 16
@@ -26,6 +25,10 @@ trait SoundInterface extends LazyLogging {
   override def toString = "Interface Name: " + name
 }
 
+object SoundInterface {
+  def getSoundInterfacesNames:Seq[String] = AudioSystem.getMixerInfo.map(_.getName).toSeq
+}
+
 private class InputSoundInterface(val name: String) extends SoundInterface {
   override def getAudioSystemLine(fmt: AudioFormat, mixerInfo: Info): Option[DataLine] = {
     Some(AudioSystem.getTargetDataLine(fmt, mixerInfo))
@@ -39,10 +42,8 @@ private class OutputSoundInterface(val name: String) extends SoundInterface {
 }
 
 object SoundInterfaceFactory {
-
   def apply(interfaceType: SoundInterfaceType, interfaceName: String): SoundInterface = interfaceType match {
     case SoundInterfaceType.OUTPUT => new OutputSoundInterface(interfaceName)
     case SoundInterfaceType.INPUT => new InputSoundInterface(interfaceName)
   }
-
 }
