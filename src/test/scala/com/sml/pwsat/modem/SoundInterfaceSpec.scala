@@ -2,21 +2,23 @@ package com.sml.pwsat.modem
 
 import javax.sound.sampled.{SourceDataLine, TargetDataLine}
 
-import com.sml.pwsat.modem.SoundInterfaceType.SoundInterfaceType
-import org.scalatest.{FlatSpec, Matchers}
+import com.typesafe.config.ConfigFactory
+import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 
-class SoundInterfaceSpec extends FlatSpec with Matchers {
+class SoundInterfaceSpec extends FlatSpec with Matchers with BeforeAndAfter {
+
+  val config = ConfigFactory.load()
 
   "A sound interface factory" should "return InputSoundInterface instance" in {
-    val interfaceName: String = "Soundflower (2ch)"
+    val interfaceName: String = config.getString("com.softwaremill.pwsat.modem.soundInterfaceName")
     val sif = SoundInterfaceFactory(SoundInterfaceType.INPUT, interfaceName)
     sif shouldBe a[InputSoundInterface]
     sif.getDataLine shouldBe a[Some[TargetDataLine]]
   }
 
   "A sound interface factory" should "return OutputSoundInterface instance" in {
-    val interfaceName: String = "Soundflower (2ch)"
+    val interfaceName: String = config.getString("com.softwaremill.pwsat.modem.soundInterfaceName")
     val sif = SoundInterfaceFactory(SoundInterfaceType.OUTPUT, interfaceName)
     sif shouldBe a[OutputSoundInterface]
     sif.getDataLine shouldBe a[Some[SourceDataLine]]
@@ -35,7 +37,7 @@ class SoundInterfaceSpec extends FlatSpec with Matchers {
   }
 
   "A sound interface instance" should "return proper string for its interfaceName" in {
-    val interfaceName: String = "Soundflower (2ch)"
+    val interfaceName: String = config.getString("com.softwaremill.pwsat.modem.soundInterfaceName")
     val sif = SoundInterfaceFactory(SoundInterfaceType.OUTPUT, interfaceName)
     sif.getDataLine shouldBe a[Some[SourceDataLine]]
     sif.toString shouldBe "Interface Name: " + interfaceName
