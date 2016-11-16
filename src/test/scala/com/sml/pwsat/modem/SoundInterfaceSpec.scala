@@ -6,8 +6,6 @@ import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 class SoundInterfaceSpec extends FlatSpec with Matchers with BeforeAndAfter {
 
-  SoundInterface.getSoundInterfacesNames.foreach(println)
-
   "A sound interface factory" should "return InputSoundInterface instance" in {
     val interfaceName = SoundInterface.getSoundInterfacesNames.head
     val sif = SoundInterfaceFactory(SoundInterfaceType.INPUT, interfaceName)
