@@ -5,6 +5,10 @@ Modulator and Demodulator for HAM Radio AX.25 audio signals
 
 `sbt run`
 
+or if the jar was already built with `sbt assembly` then execute:
+
+`java -jar path-to-the-jar/pwsat-modem-lib.jar`
+
 ## Testing
 
 `sbt test`
