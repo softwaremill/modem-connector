@@ -2,7 +2,6 @@ package com.sml.pwsat.modem
 
 import javax.sound.sampled.{SourceDataLine, TargetDataLine}
 
-import com.typesafe.config.ConfigFactory
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 
@@ -40,4 +39,5 @@ class SoundInterfaceSpec extends FlatSpec with Matchers with BeforeAndAfter {
     sif.getDataLine shouldBe a[Some[SourceDataLine]]
     sif.toString shouldBe "Interface Name: " + interfaceName
   }
+
 }
