@@ -3,7 +3,6 @@ package com.sml.pwsat.modem
 import java.io.File
 import javax.sound.sampled.{SourceDataLine, TargetDataLine}
 
-import com.typesafe.config.ConfigFactory
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 class SoundInterfaceSpec extends FlatSpec with Matchers with BeforeAndAfter {
