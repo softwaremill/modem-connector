@@ -46,4 +46,5 @@ class SoundInterfaceSpec extends FlatSpec with Matchers with BeforeAndAfter {
     sif.getDataLine shouldBe a[Some[SourceDataLine]]
     sif.toString shouldBe "System Interface Name: " + interfaceName
   }
+
 }

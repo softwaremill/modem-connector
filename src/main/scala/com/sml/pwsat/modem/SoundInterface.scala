@@ -18,7 +18,7 @@ trait SoundInterface extends LazyLogging {
   def getDataLine: Option[DataLine] = {
     val fmt: AudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
       sampleRate, sampleSizeInBits, channels, sampleBytes, sampleRate, false)
-    AudioSystem.getMixerInfo.toSeq.find(_.getName.equalsIgnoreCase(name)).map(mi => getAudioLine(fmt, mi).get)
+    SoundInterface.mixers.toSeq.find(_.getName.equalsIgnoreCase(name)).map(mi => getAudioSystemLine(fmt, mi).get)
   }
 
   protected def getAudioLine(fmt: AudioFormat, mixerInfo: Mixer.Info): Option[DataLine]
@@ -27,7 +27,8 @@ trait SoundInterface extends LazyLogging {
 }
 
 object SoundInterface {
-  def getSoundInterfacesNames:Seq[String] = AudioSystem.getMixerInfo.map(_.getName).toSeq
+  private val mixers: Array[Mixer.Info] = AudioSystem.getMixerInfo
+  def getSoundInterfacesNames:Seq[String] = mixers.map(_.getName).toSeq
 }
 
 private class InputSoundInterface(val name: String) extends SoundInterface {
