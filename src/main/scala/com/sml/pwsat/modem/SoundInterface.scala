@@ -1,5 +1,6 @@
 package com.sml.pwsat.modem
 
+import java.io.File
 import javax.sound.sampled.Mixer.Info
 import javax.sound.sampled._
 
@@ -17,12 +18,12 @@ trait SoundInterface extends LazyLogging {
   def getDataLine: Option[DataLine] = {
     val fmt: AudioFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
       sampleRate, sampleSizeInBits, channels, sampleBytes, sampleRate, false)
-    SoundInterface.mixers.toSeq.find(_.getName.equalsIgnoreCase(name)).map(mi => getAudioSystemLine(fmt, mi).get)
+    SoundInterface.mixers.toSeq.find(_.getName.equalsIgnoreCase(name)).map(mi => getAudioLine(fmt, mi).get)
   }
 
-  protected def getAudioSystemLine(fmt: AudioFormat, mixerInfo: Mixer.Info): Option[DataLine]
+  protected def getAudioLine(fmt: AudioFormat, mixerInfo: Mixer.Info): Option[DataLine]
 
-  override def toString = "Interface Name: " + name
+  override def toString = "System Interface Name: " + name
 }
 
 object SoundInterface {
@@ -31,20 +32,39 @@ object SoundInterface {
 }
 
 private class InputSoundInterface(val name: String) extends SoundInterface {
-  override def getAudioSystemLine(fmt: AudioFormat, mixerInfo: Info): Option[DataLine] = {
+  override def getAudioLine(fmt: AudioFormat, mixerInfo: Info): Option[DataLine] = {
     Some(AudioSystem.getTargetDataLine(fmt, mixerInfo))
   }
 }
 
 private class OutputSoundInterface(val name: String) extends SoundInterface {
-  override def getAudioSystemLine(fmt: AudioFormat, mixerInfo: Info): Option[DataLine] = {
+  override def getAudioLine(fmt: AudioFormat, mixerInfo: Info): Option[DataLine] = {
     Some(AudioSystem.getSourceDataLine(fmt, mixerInfo))
   }
 }
 
-object SoundInterfaceFactory {
-  def apply(interfaceType: SoundInterfaceType, interfaceName: String): SoundInterface = interfaceType match {
-    case SoundInterfaceType.OUTPUT => new OutputSoundInterface(interfaceName)
-    case SoundInterfaceType.INPUT => new InputSoundInterface(interfaceName)
+private class FileInputSoundInterface(val path: String) extends SoundInterface {
+  override def name: String = "File Interface on: " + path
+
+  override def getAudioLine(fmt: AudioFormat, mixerInfo: Info): Option[DataLine] = {
+    None
   }
+
+  override def getDataLine: Option[DataLine] = {
+    val soundFile: File = new File(path)
+    val audioStream: AudioInputStream = AudioSystem.getAudioInputStream(soundFile)
+    val audioFormat: AudioFormat = audioStream.getFormat
+    val dataLine: SourceDataLine = AudioSystem.getSourceDataLine(audioFormat)
+    Some(dataLine)
+  }
+}
+
+object SoundInterfaceFactory {
+
+  def apply(interfaceType: SoundInterfaceType, uri: String): SoundInterface = interfaceType match {
+    case SoundInterfaceType.OUTPUT => new OutputSoundInterface(uri)
+    case SoundInterfaceType.INPUT => new InputSoundInterface(uri)
+    case SoundInterfaceType.FILE_INPUT => new FileInputSoundInterface(uri)
+  }
+
 }
