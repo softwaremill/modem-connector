@@ -1,8 +1,5 @@
 package com.sml.pwsat.modem
 
-import java.io.File
-import javax.sound.sampled.{SourceDataLine, TargetDataLine}
-
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 class SoundInterfaceSpec extends FlatSpec with Matchers with BeforeAndAfter {
@@ -18,13 +15,6 @@ class SoundInterfaceSpec extends FlatSpec with Matchers with BeforeAndAfter {
     val interfaceName = SoundInterface.getSoundInterfacesNames.head
     val sif = SoundInterfaceFactory(SoundInterfaceType.OUTPUT, interfaceName)
     sif shouldBe a[OutputSoundInterface]
-    sif.getDataLine shouldBe a[Some[_]]
-  }
-
-  "A sound interface factory" should "return FileInputSoundInterface instance" in {
-    val file = new File(getClass.getResource("/packet12.wav").getPath)
-    val sif = SoundInterfaceFactory(SoundInterfaceType.FILE_INPUT, file.getAbsolutePath)
-    sif shouldBe a[FileInputSoundInterface]
     sif.getDataLine shouldBe a[Some[_]]
   }
 
