@@ -4,7 +4,7 @@ import java.io.File
 import java.util.concurrent.BlockingQueue
 import javax.sound.sampled._
 
-class FileDecodingSamplerProducer(soundFile: File, queue: BlockingQueue[Double]) extends SampleProducer(queue) {
+class FileDecodingSampleProducer(soundFile: File, queue: BlockingQueue[Double]) extends SampleProducer(queue) {
 
   val BufferSize: Int = 128000
 

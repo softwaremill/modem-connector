@@ -1,6 +1,5 @@
 package com.sml.pwsat.modem
 
-import java.io.File
 import javax.sound.sampled.Mixer.Info
 import javax.sound.sampled._
 

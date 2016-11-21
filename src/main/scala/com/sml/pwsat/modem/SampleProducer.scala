@@ -14,23 +14,18 @@ abstract class SampleProducer[T](queue: BlockingQueue[T]) extends Runnable with 
   def produceSample(audioFormat: AudioFormat, buf: Array[Byte], offset: Int, dest: Array[Double], destoff: Int): Int = {
     val sb: Int = audioFormat.getSampleSizeInBits
     val chs: Int = audioFormat.getChannels
-    var samp: Int = 0
-    var samp1: Int = 0
-    var samp2: Int = 0
     var dsamp: Double = 0
     var off = offset
     for (ch <- 1 to chs) {
       sb match {
-        case BitSampleSize16 => {
+        case BitSampleSize16 =>
           val res: (Double, Int) = handle16BitSample(audioFormat, buf, off)
           dsamp = res._1
           off = res._2
-        }
-        case BitSampleSize8 => {
+        case BitSampleSize8 =>
           val res: (Double, Int) = handle8BitSample(audioFormat, buf, off)
           dsamp = res._1
           off = res._2
-        }
         case _ => off += 1
       }
     }
@@ -42,18 +37,16 @@ abstract class SampleProducer[T](queue: BlockingQueue[T]) extends Runnable with 
     val samp1 = buf(offset) & 0xFF
     val samp2 = buf(offset + 1) & 0xFF
     val samp: Int = audioFormat.isBigEndian match {
-      case true => {
+      case true =>
         audioFormat.getEncoding == AudioFormat.Encoding.PCM_SIGNED match {
           case true if (((samp1 << 8) | samp2) & 0x8000) == 0x8000 => ((samp1 << 8) | samp2) | 0xFFFF0000
           case _ => (samp1 << 8) | samp2
         }
-      }
-      case false => {
+      case false =>
         audioFormat.getEncoding == AudioFormat.Encoding.PCM_SIGNED match {
           case true if (((samp2 << 8) | samp1) & 0x8000) == 0x8000 => ((samp2 << 8) | samp1) | 0xFFFF0000
           case _ => (samp2 << 8) | samp1
         }
-      }
     }
     (samp / 32768.0d, offset + 2)
   }

@@ -24,7 +24,7 @@ object ApplicationMain extends App {
 //  val format: AudioFormat = interface.getAudioFormat
   val queue: BlockingQueue[Double] = new LinkedBlockingQueue[Double]
 //  val producer: LineDecodingSampleProducer = new LineDecodingSampleProducer(line, format, queue)
-  val producer: FileDecodingSamplerProducer = new FileDecodingSamplerProducer(file, queue)
+  val producer: FileDecodingSampleProducer = new FileDecodingSampleProducer(file, queue)
   val consumer: PrintSampleConsumer = new PrintSampleConsumer(queue)
   new Thread(producer).start()
   new Thread(consumer).start()
