@@ -23,32 +23,7 @@ object Filter {
 
 
   def filter(x: Array[Float], jj: Int, f: Array[Float]): Float = {
-    var c: Float = 0
-    var j: Int = jj
-    for (i <- f.indices) {
-      c += x(j) * f(i)
-      j -= 1
-      if (j == -1) j = x.length - 1
-    }
-    c
-  }
-
-  /**
-    * Slower recursive version
-    */
-  def filter2(x: Array[Float], jj: Int, f: Array[Float]): Float = {
-
-    def inner(xs: Array[Float], j: Int): Float = {
-      xs match {
-        case Array(e, tail@_*) =>
-          val z = j - 1 match {
-            case -1 => x.length - 1
-            case _ => j - 1
-          }
-          (x(j) * e) + inner(tail.toArray, z)
-        case _ => 0
-      }
-    }
-    inner(f, jj)
+    val buffer = Stream.continually(x.slice(jj, x.length) ++ x.slice(0, jj)).flatten.take(x.length).toList
+    (buffer, f).zipped.map(_ * _).sum
   }
 }

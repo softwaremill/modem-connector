@@ -71,29 +71,27 @@ class AFSK1200Demodulator(sample_rate: Int, filter_length: Int, emphasis: Int, h
 
   init(sample_rate, filter_length, emphasis, handler)
 
-  private def statisticsInit() {
-    f0_period_count = 0
-    f1_period_count = 0
-    f0_max = 0.0f
-    f1_min = 0.0f
-    max_period_error = 0.0f
-  }
+  def addSample(sample: Float) = {
+    val fdiff: Float = calculateFDiff(sample)
 
-  private def statisticsFinalize() {
-    f0_max = f0_max / f0_period_count
-    f1_min = f1_min / f1_period_count
-  }
-
-  private def calcSampleRate(sr: Int): Int = {
-    if (sr == InterpolateRate) {
-      interpolate = true
-      StandardRate
-    } else {
-      sr
+    if (previous_fdiff * fdiff < 0 || previous_fdiff == 0) {
+      // we found a transition
+      val p: Int = t - last_transition
+      last_transition = t
+      val bits: Int = Math.round(p / samples_per_bit)
+      calculateState(bits)
     }
+    previous_fdiff = fdiff
+    t += 1
+    j_td += 1
+    if (j_td == td_filter.length) j_td = 0
+    j_cd += 1
+    if (j_cd == cd_filter.length) j_cd = 0
+    j_corr += 1
+    if (j_corr == c0_real.length /* samples_per_bit*/ ) j_corr = 0
   }
 
-  def init(sample_rate: Int, filter_length: Int, emphasis: Int, handler: PacketHandler) {
+  private def init(sample_rate: Int, filter_length: Int, emphasis: Int, handler: PacketHandler) {
     val sampleRate: Int = calcSampleRate(sample_rate)
     val rate_index: Int = Afsk1200Filters.sample_rates.toSeq.indexOf(sampleRate)
     samples_per_bit = (sampleRate / 1200.0).toFloat
@@ -137,7 +135,16 @@ class AFSK1200Demodulator(sample_rate: Int, filter_length: Int, emphasis: Int, h
     phase_inc_f1 = (2.0 * Math.PI * 2200.0 / sampleRate).toFloat
   }
 
-  def prepareSample(s: Float): Float = {
+  private def calcSampleRate(sr: Int): Int = {
+    if (sr == InterpolateRate) {
+      interpolate = true
+      StandardRate
+    } else {
+      sr
+    }
+  }
+
+  private def prepareSample(s: Float): Float = {
     if (interpolate) {
       if (interpolate_original) {
         interpolate_last = s
@@ -152,7 +159,7 @@ class AFSK1200Demodulator(sample_rate: Int, filter_length: Int, emphasis: Int, h
     }
   }
 
-  def calculateFDiff(s: Float): Float = {
+  private def calculateFDiff(s: Float): Float = {
     val u1: Array[Float] = new Array[Float](td_filter.length)
     u1(j_td) = prepareSample(s)
 
@@ -183,29 +190,9 @@ class AFSK1200Demodulator(sample_rate: Int, filter_length: Int, emphasis: Int, h
     fdiff
   }
 
-  def collectStatistics(fdiff: Float, p: Int, bits: Int): Unit = {
-    if (fdiff < 0) {
-      // last period was high, meaning f0
-      f0_period_count += 1
-      f0_max += f0_current_max
-      val err: Double = Math.abs(bits - (p / samples_per_bit))
-      if (err > max_period_error) max_period_error = err.toFloat
-      // prepare for the period just starting now
-      f1_current_min = fdiff
-    } else {
-      f1_period_count += 1
-      f1_min += f1_current_min
-      val err: Double = Math.abs(bits - (p / samples_per_bit)).toDouble
-      if (err > max_period_error) max_period_error = err.toFloat
-      // prepare for the period just starting now
-      f0_current_max = fdiff
-    }
-  }
-
-  def decoding(bits: Int): Unit = {
+  private def decoding(bits: Int): Unit = {
     if (bits == 7) {
       if (packetOpt.isDefined && packetOpt.get.terminate()) {
-        statisticsFinalize()
         handler.handlePacket(packetOpt.get.bytesWithoutCRC())
       }
       packetOpt = None
@@ -236,21 +223,20 @@ class AFSK1200Demodulator(sample_rate: Int, filter_length: Int, emphasis: Int, h
     }
   }
 
-  def waiting(bits: Int): Unit = {
+  private def waiting(bits: Int): Unit = {
     if (bits == 7) {
       state = DemodulatorState.JUST_SEEN_FLAG
       data_carrier = true
-      statisticsInit(); // start measuring a new packet
     }
   }
 
-  def justSeenFlag(bits: Int): Unit = {
+  private def justSeenFlag(bits: Int): Unit = {
     if (bits != 7) {
       state = DemodulatorState.DECODING
     }
   }
 
-  def switchState(bits: Int): Unit = {
+  private def switchState(bits: Int): Unit = {
     if (bits == 7) {
       state match {
         case DemodulatorState.WAITING => waiting(bits)
@@ -266,7 +252,7 @@ class AFSK1200Demodulator(sample_rate: Int, filter_length: Int, emphasis: Int, h
     }
   }
 
-  def calculateState(bits: Int): Unit = {
+  private def calculateState(bits: Int): Unit = {
     if (bits == 0 || bits > 7) {
       state = DemodulatorState.WAITING
       data_carrier = false
@@ -287,7 +273,7 @@ class AFSK1200Demodulator(sample_rate: Int, filter_length: Int, emphasis: Int, h
     }
   }
 
-  def createPacket(): Unit = {
+  private def createPacket(): Unit = {
     if (bitcount == 8) {
       if (packetOpt.isEmpty) {
         packetOpt = Some(new AX25Packet())
@@ -298,42 +284,6 @@ class AFSK1200Demodulator(sample_rate: Int, filter_length: Int, emphasis: Int, h
       }
       data = 0
       bitcount = 0
-    }
-  }
-
-  def addSamples(s: Array[Float], n: Int) = {
-    var i: Int = 0
-    while (i < n) {
-      val fdiff: Float = calculateFDiff(s(i))
-      if (!interpolate || !interpolate_original) {
-        i += 1
-      }
-
-      if (previous_fdiff * fdiff < 0 || previous_fdiff == 0) {
-        // we found a transition
-        val p: Int = t - last_transition
-        last_transition = t
-        val bits: Int = Math.round(p / samples_per_bit)
-
-        // collect statistics
-        collectStatistics(fdiff, p, bits)
-
-        calculateState(bits)
-      }
-
-      previous_fdiff = fdiff
-
-      t += 1
-
-      j_td += 1
-      if (j_td == td_filter.length) j_td = 0
-
-      j_cd += 1
-      if (j_cd == cd_filter.length) j_cd = 0
-
-      j_corr += 1
-      if (j_corr == c0_real.length /* samples_per_bit*/ ) j_corr = 0
-
     }
   }
 

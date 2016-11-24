@@ -17,7 +17,7 @@ class AFSK1200DemodulatorSpec extends FlatSpec with Matchers with BeforeAndAfter
   val demodulator: AFSK1200Demodulator = new AFSK1200Demodulator(SampleRate, FilterLength, Emphasis, handler)
 
   "A AFSK1200DemodulatorSpec" should "demodulate given audio signal into AX25 frames" in {
-    samplesFromAudioFile("/packet12.wav").foreach(packet => demodulator.addSamples(Array(packet.toFloat), 1))
+    samplesFromAudioFile("/packet12.wav").foreach(packet => demodulator.addSample(packet.toFloat))
     handler.getResult() shouldBe "[NOCALL>CQ:hello\\x0d]"
   }
 

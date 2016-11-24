@@ -16,6 +16,6 @@ class PrintSampleConsumer(queue: BlockingQueue[Double]) extends SampleConsumer(q
     f[0] = Float.parseFloat(l);
                     multi.addSamples(f, 1);
      */
-    demodulator.addSamples(Array(sample.toFloat),1)
+    demodulator.addSample(sample.toFloat)
   }
 }
