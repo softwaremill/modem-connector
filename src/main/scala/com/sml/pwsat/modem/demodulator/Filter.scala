@@ -22,8 +22,8 @@ object Filter {
     -1.944758e-002f, -1.075260e-002f, -4.027708e-003f, 4.947263e-004f, 3.164012e-003f, 4.708974e-003f, 5.961802e-003f)
 
 
-  def filter(x: Array[Float], jj: Int, f: Array[Float]): Float = {
-    val buffer = Stream.continually(x.slice(jj, x.length) ++ x.slice(0, jj)).flatten.take(x.length).toList
+  def filter(x: Array[Float], j: Int, f: Array[Float]): Float = {
+    val buffer = Stream.continually(x.slice(j, x.length) ++ x.slice(0, j)).flatten.take(x.length).toList
     (buffer, f).zipped.map(_ * _).sum
   }
 }

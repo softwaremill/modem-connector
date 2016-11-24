@@ -38,20 +38,6 @@ class AFSK1200Demodulator(sample_rate: Int, filter_length: Int, emphasis: Int, h
   private var interpolate: Boolean = false
   private var interpolate_last: Float = _
   private var interpolate_original: Boolean = false
-  /*
-     * Diagnostic variables for estimating packet quality
-   */
-  private var f0_period_count: Int = 0
-
-  private var f1_period_count: Int = 0
-  private var f0_max: Float = 0
-
-  private var f1_min: Float = 0
-  // to collect average max, min in the filtered diff signal
-  private var f0_current_max: Float = 0
-
-  private var f1_current_min: Float = 0
-  private var max_period_error: Float = 0
 
   //for addSample
   private var j_td: Int = 0
