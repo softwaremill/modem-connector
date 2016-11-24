@@ -16,9 +16,11 @@ object ApplicationMain extends App {
    */
   system.awaitTermination()
 
+  runSampleProducerConsumer()
+
   def runSampleProducerConsumer(): Unit = {
 
-    val file = new File(getClass.getResource("/packet12.wav").getPath)
+    val file = new File(getClass.getResource("/afsk/packet12.wav").getPath)
     /*
       val interface: SoundInterface = SoundInterfaceFactory.apply(SoundInterfaceType.INPUT, "Soundflower (2ch)")
       val interface: SoundInterface = SoundInterfaceFactory.apply(SoundInterfaceType.FILE_INPUT, file.getAbsolutePath)
