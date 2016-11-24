@@ -5,7 +5,6 @@ import com.sml.pwsat.modem.packet.{AX25Packet, PacketHandler}
 
 
 class AFSK1200Demodulator(sample_rate: Int, filter_length: Int, emphasis: Int, handler: PacketHandler) {
-  init(sample_rate, filter_length, emphasis, handler)
 
   private val Emphasis0: Int = 0
   private val Emphasis6: Int = 6
@@ -69,6 +68,8 @@ class AFSK1200Demodulator(sample_rate: Int, filter_length: Int, emphasis: Int, h
   private var flag_separator_seen: Boolean = false
 
   @volatile private var data_carrier: Boolean = false
+
+  init(sample_rate, filter_length, emphasis, handler)
 
   private def statisticsInit() {
     f0_period_count = 0
