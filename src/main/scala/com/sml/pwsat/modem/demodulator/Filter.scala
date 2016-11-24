@@ -23,7 +23,7 @@ object Filter {
 
 
   def filter(x: Array[Float], j: Int, f: Array[Float]): Float = {
-    val buffer = Stream.continually(x.slice(j, x.length) ++ x.slice(0, j)).flatten.take(x.length).toList
+    val buffer = Stream.continually(x.slice(j, x.length) ++ x.slice(0, j)).flatten.take(f.length).toList
     (buffer, f).zipped.map(_ * _).sum
   }
 }
