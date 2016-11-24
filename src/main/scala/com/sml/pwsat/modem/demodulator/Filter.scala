@@ -38,14 +38,14 @@ object Filter {
     */
   def filter2(x: Array[Float], jj: Int, f: Array[Float]): Float = {
 
-    def inner(xs: Array[Float], acc: Int): Float = {
+    def inner(xs: Array[Float], j: Int): Float = {
       xs match {
         case Array(e, tail@_*) =>
-          val z = acc - 1 match {
+          val z = j - 1 match {
             case -1 => x.length - 1
-            case _ => acc - 1
+            case _ => j - 1
           }
-          (x(acc) * e) + inner(tail.toArray, z)
+          (x(j) * e) + inner(tail.toArray, z)
         case _ => 0
       }
     }
