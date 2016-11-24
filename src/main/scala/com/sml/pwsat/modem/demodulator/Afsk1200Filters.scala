@@ -1,6 +1,6 @@
 package com.sml.pwsat.modem.demodulator
 
-//noinspection ScalaStyle
+//noinspection
 object Afsk1200Filters {
   val sample_rates: Array[Int] = Array(9600, 12000, 11025, 16000, 22050, 24000, 44100, 48000)
   val bit_periods: Array[Int] = Array(8, 10, 9, 13, 18, 20, 36, 40)
