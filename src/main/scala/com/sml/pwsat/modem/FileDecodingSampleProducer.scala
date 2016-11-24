@@ -20,13 +20,15 @@ class FileDecodingSampleProducer(soundFile: File, queue: BlockingQueue[Double]) 
     while (nBytesRead != -1) {
       try {
         nBytesRead = audioStream.read(buf, 0, BufferSize)
-        var offset: Int = 0
-        var index: Int = 0
-        while (offset < BufferSize) {
-          offset = produceSample(audioFormat, buf, offset, fltbuf, index)
-          index += 1
+        if(nBytesRead != -1) {
+          var offset: Int = 0
+          var index: Int = 0
+          while (offset < BufferSize) {
+            offset = produceSample(audioFormat, buf, offset, fltbuf, index)
+            index += 1
+          }
+          process(fltbuf)
         }
-        process(fltbuf)
       } catch {
         case e: Throwable => e.printStackTrace()
       }
