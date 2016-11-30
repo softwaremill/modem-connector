@@ -1,10 +1,7 @@
 package com.example
 
-import java.io.File
-import java.util.concurrent.{BlockingQueue, LinkedBlockingQueue}
 
 import akka.actor.ActorSystem
-import com.sml.pwsat.modem._
 
 object ApplicationMain extends App {
   val system = ActorSystem("MyActorSystem")
@@ -15,24 +12,5 @@ object ApplicationMain extends App {
    * see counter logic in PingActor
    */
   system.awaitTermination()
-
-  runSampleProducerConsumer()
-
-  def runSampleProducerConsumer(): Unit = {
-
-    val file = new File(getClass.getResource("/afsk/packet12.wav").getPath)
-    /*
-      val interface: SoundInterface = SoundInterfaceFactory.apply(SoundInterfaceType.INPUT, "Soundflower (2ch)")
-      val interface: SoundInterface = SoundInterfaceFactory.apply(SoundInterfaceType.FILE_INPUT, file.getAbsolutePath)
-      val line: TargetDataLine = interface.getDataLine.get.asInstanceOf[TargetDataLine]
-      val format: AudioFormat = interface.getAudioFormat
-      val producer: LineDecodingSampleProducer = new LineDecodingSampleProducer(line, format, queue)
-    */
-    val queue: BlockingQueue[Double] = new LinkedBlockingQueue[Double]
-    val producer: FileDecodingSampleProducer = new FileDecodingSampleProducer(file, queue)
-    val consumer: PrintSampleConsumer = new PrintSampleConsumer(queue)
-    new Thread(producer).start()
-    new Thread(consumer).start()
-  }
 }
 
