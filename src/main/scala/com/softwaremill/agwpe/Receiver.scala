@@ -11,29 +11,17 @@ object Receiver {
     val pid: Short = (is.readUnsignedByte() | (is.readUnsignedByte() << 8)).toShort
 
     def findCallValue(): Option[String] = {
-
-      import scala.util.control.Breaks._
-
       val ch: Int = is.readUnsignedByte()
       if (0 == ch) {
         is.skipBytes(9)
         None
       } else {
-        val b: StringBuilder = new StringBuilder(9)
-        b.append(ch.toChar)
-        breakable {
-          (1 to 9).foreach(i => {
-            val ch: Int = is.readUnsignedByte()
-            if (0 == ch) {
-              break
-            }
-            b.append(ch.toChar)
-          })
-        }
-        if (b.length < 9) {
-          is.skipBytes(9 - b.length)
-        }
-        Some(b.toString)
+        val result = List.tabulate(9)(c => {
+          val ch: Int = is.readUnsignedByte()
+          if(0 == ch) None
+          else Some(ch.toChar)
+        }).flatMap(b => b.toString).mkString("")
+        Some(result)
       }
     }
     val callFrom: Option[String] = findCallValue()
