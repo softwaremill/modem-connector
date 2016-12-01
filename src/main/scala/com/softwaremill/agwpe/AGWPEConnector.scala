@@ -2,6 +2,11 @@ package com.softwaremill.agwpe
 
 import java.net.{InetSocketAddress, Socket}
 
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.{Flow, Framing, Source, Tcp}
+import akka.util.ByteString
+
 
 class AGWPEConnector {
 
@@ -9,12 +14,10 @@ class AGWPEConnector {
     val sockToAGWPE: Socket = new Socket
     sockToAGWPE.setSoLinger(false, 1)
     sockToAGWPE.connect(new InetSocketAddress(AGWPESettings.host, AGWPESettings.port), AGWPESettings.timeout)
-    val listener: AGWPEListener = new AGWPEListener(sockToAGWPE, AGWPESettings.host, AGWPESettings.port)
-    val t: Thread = new Thread(listener, "AGWPEConnector[" + AGWPESettings.host + ':' + AGWPESettings.port + ']')
-    t.setDaemon(false)
-    t.start()
+    val listener2: AGWPEListener = new AGWPEListener(sockToAGWPE)
 
-    listener.sendAGWPEFrame(0, 'R', 0, null, null, null) // ask for version
-    listener.sendAGWPEFrame(0, 'G', 0, null, null, null) // ask for radioport info
+    val t2: Thread = new Thread(listener2, "AGWPEConnector[" + AGWPESettings.host + ':' + AGWPESettings.port + ']')
+    t2.setDaemon(false)
+    t2.start()
   }
 }
