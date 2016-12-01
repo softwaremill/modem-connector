@@ -16,7 +16,7 @@ class AGWPEListener(socket: Socket) extends Runnable {
   override def run(): Unit = {
     while (true) {
       try {
-        val frame: AGWPEFrame = Receiver.receiveAGWPEFrame(socketIn)
+        val frame: AGWPEFrame = AGWPEFrameHandler.handleAGWPEFrame(socketIn)
         val result: Char = (frame.dataKind & 0xFFFF).toChar
         println("RESULT: " + result)
         result match {
