@@ -14,7 +14,7 @@ class AGWPEConnector {
     val sockToAGWPE: Socket = new Socket
     sockToAGWPE.setSoLinger(false, 1)
     sockToAGWPE.connect(new InetSocketAddress(AGWPESettings.host, AGWPESettings.port), AGWPESettings.timeout)
-    val listener2: AGWPEListener = new AGWPEListener(sockToAGWPE)
+    val listener2: AGWPEHandler = new AGWPEHandler(sockToAGWPE)
 
     val t2: Thread = new Thread(listener2, "AGWPEConnector[" + AGWPESettings.host + ':' + AGWPESettings.port + ']')
     t2.setDaemon(false)

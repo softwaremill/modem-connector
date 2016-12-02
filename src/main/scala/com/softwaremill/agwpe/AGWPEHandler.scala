@@ -4,14 +4,14 @@ import java.io.{DataInputStream, DataOutputStream, IOException}
 import java.net.{Socket, SocketException}
 
 
-class AGWPEListener(socket: Socket) extends Runnable {
+class AGWPEHandler(socket: Socket) extends Runnable {
 
   val socketIn: DataInputStream = new DataInputStream(socket.getInputStream)
   val socketOut: DataOutputStream = new DataOutputStream(socket.getOutputStream)
 
-  Sender.send(socketOut, AGWPEFrame.version)
-  Sender.send(socketOut, AGWPEFrame.info)
-  Sender.send(socketOut, AGWPEFrame.monitorOn)
+  send(socketOut, AGWPEFrame.version)
+  send(socketOut, AGWPEFrame.info)
+  send(socketOut, AGWPEFrame.monitorOn)
 
   override def run(): Unit = {
     while (true) {
@@ -36,7 +36,7 @@ class AGWPEListener(socket: Socket) extends Runnable {
   }
 
   def handlePortInformationCommand(frame: AGWPEFrame): Unit = {
-    Sender.send(socketOut, AGWPEFrame.valueOf('g'))
+    send(socketOut, AGWPEFrame.valueOf('g'))
   }
 
   def handleRadioPortCapabilities(frame: AGWPEFrame): Unit = {
@@ -45,5 +45,11 @@ class AGWPEListener(socket: Socket) extends Runnable {
 
   def handleAGWPEVersionCommand(frame: AGWPEFrame): Unit = {
 
+  }
+
+  def send(socketOut: DataOutputStream, agwpeFrame: AGWPEFrame): Unit = {
+    this.synchronized {
+      agwpeFrame.bytes.foreach(socketOut.write)
+    }
   }
 }
