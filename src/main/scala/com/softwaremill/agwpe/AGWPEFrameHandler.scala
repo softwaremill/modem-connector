@@ -44,6 +44,6 @@ object AGWPEFrameHandler {
 
     val data: Array[Byte] = readData()
 
-    new AGWPEFrame(port, datakind, pid, callFrom, callTo, dataLength, user, data)
+    new AGWPEFrame(port, datakind, pid, callFrom, callTo, dataLength, user, Option(data))
   }
 }
