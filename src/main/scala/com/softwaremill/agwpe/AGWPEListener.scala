@@ -36,7 +36,7 @@ class AGWPEListener(socket: Socket) extends Runnable {
   }
 
   def handlePortInformationCommand(frame: AGWPEFrame): Unit = {
-    Sender.send(socketOut, AGWPEFrame('g'))
+    Sender.send(socketOut, AGWPEFrame.valueOf('g'))
   }
 
   def handleRadioPortCapabilities(frame: AGWPEFrame): Unit = {

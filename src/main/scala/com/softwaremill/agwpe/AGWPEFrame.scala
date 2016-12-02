@@ -36,15 +36,15 @@ object AGWPEFrame {
     new AGWPEFrame(port, dataKind, pid, None, None, 0, 0, None)
   }
 
-  def apply(dataKind: Short): AGWPEFrame = {
+  def valueOf(dataKind: Short): AGWPEFrame = {
     new AGWPEFrame(0, dataKind, 0, None, None, 0, 0, None)
   }
 
-  def version: AGWPEFrame = apply('R')
+  def version: AGWPEFrame = valueOf('R')
 
-  def info: AGWPEFrame = apply('G')
+  def info: AGWPEFrame = valueOf('G')
 
-  def monitorOn: AGWPEFrame = apply('k')
+  def monitorOn: AGWPEFrame = valueOf('k')
 
   def apply(is: DataInputStream): AGWPEFrame = {
     val port: Int = is.readUnsignedByte() | (is.readUnsignedByte() << 8) | (is.readUnsignedByte() << 16) | (is.readUnsignedByte() << 24)
