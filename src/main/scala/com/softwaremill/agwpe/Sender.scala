@@ -4,58 +4,22 @@ import java.io.DataOutputStream
 
 object Sender {
 
+  val IdSize = 10
+  val Byte = 8
+  val HalfByte = 4
+
   def sendAGWPEFrame(socketOut: DataOutputStream, port: Int, dataKind: Char, pid: Int, callFrom: String, callTo: String, data: Array[Byte]): Unit = {
-        socketOut.write(port)
-        socketOut.write(0)
-        socketOut.write(0)
-        socketOut.write(0)
-        socketOut.write(dataKind)
-        socketOut.write(0)
-        socketOut.write(pid)
-        socketOut.write(0)
-        if (null == callFrom) {
-          (0 to 9).foreach(x => socketOut.write(0))
-        } else {
-//            var i:Int = 0
-//            for (i = 0; i < Math.min(callFrom.length(), 10); i++) {
-//                socketOut.write(callFrom.charAt(i));
-//            }
-//            for (; i < 10; i++) {
-//                socketOut.write(0);
-//            }
-        }
-        if (null == callTo) {
-          (0 to 9).foreach(x => socketOut.write(0))
-        } else {
-//            var i:Int = 0;
-//            for (i = 0; i < Math.min(callTo.length(), 10); i++) {
-//                socketOut.write(callTo.charAt(i))
-//            }
-//            for (; i < 10; i++) {
-//                socketOut.write(0)
-//            }
-        }
-        if (null == data) {
-            socketOut.write(0) // dataLen
-            socketOut.write(0)
-            socketOut.write(0)
-            socketOut.write(0)
-            socketOut.write(0) // user
-            socketOut.write(0)
-            socketOut.write(0)
-            socketOut.write(0)
-        } else {
-            val v:Int = data.length
-            socketOut.write(v) // dataLen
-            socketOut.write(v >>> 8)
-            socketOut.write(v >>> 16)
-            socketOut.write(v >>> 24)
-            socketOut.write(0) // user
-            socketOut.write(0)
-            socketOut.write(0)
-            socketOut.write(0)
-            socketOut.write(data)
-        }
-        socketOut.flush()
+    frameBytes(port, dataKind, pid, callFrom, callTo, data).foreach(socketOut.write)
   }
+
+  private def frameBytes(port: Int, dataKind: Char, pid: Int, callFrom: String, callTo: String, data: Array[Byte]): List[Int] = {
+    def callBytes(string: String): List[Int] = (string.toList.map(_.toInt) ++ List.fill(IdSize - string.length)(0)).take(IdSize)
+    def dataBytes(dataOpt: Option[Array[Byte]]): List[Int] = dataOpt match {
+      case None => List.fill(Byte)(0)
+      case Some(someData) => List.tabulate(HalfByte)(pos => someData.length >>> (Byte*pos)) ++ List.fill(HalfByte)(0) ++ someData
+    }
+    val headerBytes = port :: 0 :: 0 :: 0 :: dataKind :: 0 :: pid :: 0 :: Nil
+    headerBytes ++ callBytes(callFrom) ++ callBytes(callTo) ++ dataBytes(Option(data))
+  }
+
 }
