@@ -23,7 +23,7 @@ class AGWPEHandler(socket: Socket) extends Runnable {
           case 'G' => handlePortInformationCommand(frame)
           case 'R' => handleAGWPEVersionCommand(frame)
           case 'g' => handleRadioPortCapabilities(frame)
-          //etc...
+          //todo: etc...
           case _ => println("Unknown command")
 
         }

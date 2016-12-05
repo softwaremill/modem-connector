@@ -22,7 +22,7 @@ lazy val root = (project in file("."))
     scalaSource in Compile := baseDirectory.value / "src/main/scala",
     scalaSource in Test := baseDirectory.value / "src/test/scala",
     libraryDependencies ++= coreDependencies ++ testDependencies,
-    mainClass in Compile := Some("ApplicationMain"),
+    mainClass in Compile := Some("com.softwaremill.modem.ApplicationMain"),
     assemblyJarName in assembly := "pwsat-modem-lib.jar",
     fork := true
   )
