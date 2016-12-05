@@ -42,8 +42,6 @@ object AGWPEFrame {
 
   def version: AGWPEFrame = valueOf('R')
 
-  def info: AGWPEFrame = valueOf('G')
-
   def monitorOn: AGWPEFrame = valueOf('k')
 
   def apply(is: DataInputStream): AGWPEFrame = {
