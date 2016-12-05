@@ -58,9 +58,8 @@ class AGWPEHandler(socket: Socket) extends Runnable with LazyLogging {
     */
   //noinspection ScalaStyle
   def receiveCommand(frame: AGWPEFrame): Unit = {
-    val command: Char = (frame.dataKind & 0xFFFF).toChar
-    logger.info("Command code received: " + command)
-    command match {
+    logger.info("Command code received: " + frame.command)
+    frame.command match {
       case 'C' => handleConnectStatusCommand(frame)
       case 'd' => handleDisconnectStatusCommand(frame)
       case 'R' => handleVersionCommand(frame)
