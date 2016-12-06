@@ -1,9 +1,12 @@
 package com.softwaremill
 
-import com.softwaremill.agwpe.AGWPEConnector
+import java.util.concurrent.{BlockingQueue, LinkedBlockingQueue}
+
+import com.softwaremill.agwpe.{AGWPEConnector, AGWPEFrame}
 
 object ApplicationMain extends App {
-  val connector: AGWPEConnector = new AGWPEConnector
+  val queue: BlockingQueue[AGWPEFrame] = new LinkedBlockingQueue[AGWPEFrame]
+  val connector: AGWPEConnector = new AGWPEConnector(queue)
   connector.open()
 }
 
