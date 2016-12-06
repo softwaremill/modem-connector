@@ -3,11 +3,12 @@ package com.softwaremill.agwpe
 import java.io.{DataInputStream, DataOutputStream}
 import java.net.Socket
 import java.util.Date
+import java.util.concurrent.BlockingQueue
 
 import com.typesafe.scalalogging.LazyLogging
 
 
-class AGWPEHandler(socket: Socket) extends Runnable with LazyLogging {
+class AGWPEFrameProducer(socket: Socket, queue: BlockingQueue[AGWPEFrame]) extends Runnable with LazyLogging {
 
   val AgwpeFrameEncoding: String = "US-ASCII"
   val socketIn: DataInputStream = new DataInputStream(socket.getInputStream)
@@ -98,7 +99,9 @@ class AGWPEHandler(socket: Socket) extends Runnable with LazyLogging {
     logger.info("AGWPE version " + majorVersion + '.' + minorVersion)
   }
 
-  private def handleRawAX25FrameCommand(frame: AGWPEFrame): Unit = ???
+  private def handleRawAX25FrameCommand(frame: AGWPEFrame): Unit = {
+    queue.put(frame)
+  }
 
   def send(socketOut: DataOutputStream, agwpeFrame: AGWPEFrame): Unit = {
     this.synchronized {
