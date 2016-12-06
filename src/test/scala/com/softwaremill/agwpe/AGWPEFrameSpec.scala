@@ -9,7 +9,7 @@ class AGWPEFrameSpec extends FlatSpec with Matchers with BeforeAndAfter {
   "An AGWPEFrame" should "be created from binary data received from SoundModem" in {
     val dis: DataInputStream = dataStream("/getInfoQuery.bin")
     val frame: AGWPEFrame = AGWPEFrame(dis)
-    frame.dataKind.toChar shouldEqual 'R'
+    frame.command shouldEqual 'R'
   }
 
   "An AGWPEFrame" should "contain data received as encoded AX.25 frame" in {

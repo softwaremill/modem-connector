@@ -21,7 +21,8 @@ object Dependencies {
       "com.softwaremill.akka-http-session" %% "core" % "0.2.5",
       "de.heikoseeberger" %% "akka-http-circe" % "1.5.2",
       "ch.megard" %% "akka-http-cors" % "0.1.1",
-      "com.typesafe.akka" %% "akka-stream-contrib" % "0.2")
+      "com.typesafe.akka" %% "akka-stream-contrib" % "0.2",
+      "com.jsuereth" %% "scala-arm" % "1.4")
   }
 
   val testDependencies = {

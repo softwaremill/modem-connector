@@ -2,7 +2,7 @@ package com.softwaremill.agwpe
 
 import java.io.DataInputStream
 
-class AGWPEFrame(val port: Int, val dataKind: Short, val pid: Short,
+class AGWPEFrame(val port: Int, val command: Char, val pid: Short,
                  val callFrom: Option[String], val callTo: Option[String],
                  val dataLength: Int, val user: Int, val data: Option[Array[Byte]]) {
 
@@ -18,7 +18,7 @@ class AGWPEFrame(val port: Int, val dataKind: Short, val pid: Short,
       case Some(someData) => List.tabulate(HalfByte)(pos => someData.length >>> (Byte * pos)) ++ List.fill(HalfByte)(0) ++ someData.map(_.toInt)
     }
 
-    val headerBytes: List[Int] = port :: 0 :: 0 :: 0 :: dataKind.toInt :: 0 :: pid.toInt :: 0 :: Nil
+    val headerBytes: List[Int] = port :: 0 :: 0 :: 0 :: command.toInt :: 0 :: pid.toInt :: 0 :: Nil
     headerBytes ++ callBytes(callFrom.getOrElse("")) ++ callBytes(callTo.getOrElse("")) ++ dataBytes(data)
   }
 
@@ -26,29 +26,28 @@ class AGWPEFrame(val port: Int, val dataKind: Short, val pid: Short,
 
 object AGWPEFrame {
 
-  def apply(port: Int, dataKind: Short, pid: Short,
+  def apply(port: Int, command: Char, pid: Short,
             callFrom: Option[String], callTo: Option[String],
             dataLength: Int, user: Int, data: Option[Array[Byte]]): AGWPEFrame = {
-    new AGWPEFrame(port, dataKind, pid, callFrom, callTo, dataLength, user, data)
+    new AGWPEFrame(port, command, pid, callFrom, callTo, dataLength, user, data)
   }
 
-  def apply(port: Int, dataKind: Short, pid: Short): AGWPEFrame = {
-    new AGWPEFrame(port, dataKind, pid, None, None, 0, 0, None)
+  def apply(port: Int, command: Char, pid: Short): AGWPEFrame = {
+    new AGWPEFrame(port, command, pid, None, None, 0, 0, None)
   }
 
-  def valueOf(dataKind: Short): AGWPEFrame = {
-    new AGWPEFrame(0, dataKind, 0, None, None, 0, 0, None)
+  def valueOf(command: Char): AGWPEFrame = {
+    new AGWPEFrame(0, command, 0, None, None, 0, 0, None)
   }
 
   def version: AGWPEFrame = valueOf('R')
-
-  def info: AGWPEFrame = valueOf('G')
 
   def monitorOn: AGWPEFrame = valueOf('k')
 
   def apply(is: DataInputStream): AGWPEFrame = {
     val port: Int = is.readUnsignedByte() | (is.readUnsignedByte() << 8) | (is.readUnsignedByte() << 16) | (is.readUnsignedByte() << 24)
     val datakind: Short = (is.readUnsignedByte() | (is.readUnsignedByte() << 8)).toShort
+    val command = (datakind & 0xFFFF).toChar
     val pid: Short = (is.readUnsignedByte() | (is.readUnsignedByte() << 8)).toShort
 
     def findCallValue(): Option[String] = {
@@ -86,7 +85,7 @@ object AGWPEFrame {
 
     val data: Array[Byte] = readData()
 
-    new AGWPEFrame(port, datakind, pid, callFrom, callTo, dataLength, user, Option(data))
+    new AGWPEFrame(port, command, pid, callFrom, callTo, dataLength, user, Option(data))
   }
 
 }

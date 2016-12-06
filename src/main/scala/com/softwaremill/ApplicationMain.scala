@@ -1,4 +1,4 @@
-package com.softwaremill.modem
+package com.softwaremill
 
 import com.softwaremill.agwpe.AGWPEConnector
 
