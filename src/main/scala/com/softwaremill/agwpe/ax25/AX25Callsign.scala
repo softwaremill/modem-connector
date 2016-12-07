@@ -8,8 +8,8 @@ object AX25Callsign {
   val CallsignSize: Int = 6
 
   def apply(data: Array[Byte]): AX25Callsign = {
-    def char(charByte: Byte): Char = ((charByte & 0xFF) >> 1).toChar
-    val callsign: String = data.slice(0, CallsignSize).map(char).toString
+    def getChar(charByte: Byte): Char = ((charByte & 0xFF) >> 1).toChar
+    val callsign: String = new String(data.slice(0, CallsignSize).map(getChar), 0, CallsignSize).trim
     val flag = data(CallsignSize)
     val h_c: Boolean = (flag & 0x80) != 0
     val reserved: Byte = ((flag & 0x60) >> 5).toByte
