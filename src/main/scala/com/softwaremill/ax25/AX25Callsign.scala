@@ -1,4 +1,4 @@
-package com.softwaremill.agwpe.ax25
+package com.softwaremill.ax25
 
 class AX25Callsign(val callsign: String, val h_c: Boolean, val reserved: Byte, val ssid: Byte, val last: Boolean){
 }
@@ -17,5 +17,4 @@ object AX25Callsign {
     val last: Boolean = (flag & 0x01) != 0
     new AX25Callsign(callsign, h_c, reserved, ssid, last)
   }
-
 }

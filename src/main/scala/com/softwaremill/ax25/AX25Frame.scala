@@ -1,4 +1,4 @@
-package com.softwaremill.agwpe.ax25
+package com.softwaremill.ax25
 
 import scala.collection.mutable.ListBuffer
 
