@@ -1,13 +1,15 @@
 package com.softwaremill.agwpe
 
 import java.net.{InetSocketAddress, Socket}
-import java.util.concurrent.BlockingQueue
+import java.util.concurrent.{BlockingQueue, LinkedBlockingQueue}
 
 import com.softwaremill.ax25.AX25Frame
 import com.softwaremill.service.{AGWPEFrameConsumer, FrameObserver}
 
 
-class AGWPEConnector(queue: BlockingQueue[AGWPEFrame]) {
+class AGWPEConnector {
+
+  val queue: BlockingQueue[AGWPEFrame] = new LinkedBlockingQueue[AGWPEFrame]
 
   def startConnection(ax25FrameObservers: Seq[FrameObserver[AX25Frame]]): Unit = {
     val sockToAGWPE: Socket = new Socket

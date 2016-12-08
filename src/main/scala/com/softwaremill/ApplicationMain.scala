@@ -7,8 +7,7 @@ import com.softwaremill.ax25.AX25Frame
 import com.softwaremill.service.FrameObserver
 
 object ApplicationMain extends App {
-  val queue: BlockingQueue[AGWPEFrame] = new LinkedBlockingQueue[AGWPEFrame]
-  val connector: AGWPEConnector = new AGWPEConnector(queue)
+  val connector: AGWPEConnector = new AGWPEConnector
   val observer: PrintLineAX25FrameObserver = new PrintLineAX25FrameObserver
   connector.startConnection(List(observer))
 }
