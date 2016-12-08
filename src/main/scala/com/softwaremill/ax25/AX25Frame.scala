@@ -64,5 +64,4 @@ object AX25Frame {
 
   override def toString: String = super.toString
 
-  def toBytes: Array[Byte] = ???
 }
