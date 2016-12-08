@@ -1,8 +1,6 @@
 package com.softwaremill
 
-import java.util.concurrent.{BlockingQueue, LinkedBlockingQueue}
-
-import com.softwaremill.agwpe.{AGWPEConnector, AGWPEFrame}
+import com.softwaremill.agwpe.AGWPEConnector
 import com.softwaremill.ax25.AX25Frame
 import com.softwaremill.service.FrameObserver
 
