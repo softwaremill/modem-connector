@@ -15,8 +15,10 @@ class AGWPEFrameProducer(socket: Socket, queue: BlockingQueue[AGWPEFrame]) exten
   val socketOut: DataOutputStream = new DataOutputStream(socket.getOutputStream)
 
   send(socketOut, AGWPEFrame.version)
+  send(socketOut, AGWPEFrame.monitorOn)
 
   override def run(): Unit = {
+    logger.info("Starting Producer....")
     while (true) {
       try {
         val frame: AGWPEFrame = AGWPEFrame(socketIn)
