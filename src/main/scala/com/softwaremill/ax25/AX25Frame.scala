@@ -9,7 +9,7 @@ class AX25Frame(val sender: AX25Callsign, val dest: AX25Callsign,
   val Flag: Byte = 0x7E
 
   def toBytes: Array[Byte] = {
-    (Array(Flag) :: dest.toBytes :: sender.toBytes :: digipeaters.flatMap(_.toBytes) :: Array(ctl) :: pid.toArray :: body :: Nil).toArray.flatten
+    (Seq(Flag) ++ dest.toBytes ++ sender.toBytes ++ digipeaters.flatMap(_.toBytes) ++ Seq(ctl) ++ pid.toSeq ++ body).toArray
   }
 
 }
