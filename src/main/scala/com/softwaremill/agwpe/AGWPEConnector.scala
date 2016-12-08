@@ -25,4 +25,6 @@ class AGWPEConnector(val host: String = AGWPESettings.host, val port: Int = AGWP
     t1.start()
     t2.start()
   }
+
+  def sendAx25Frame(frame: AX25Frame): Unit = ???
 }
