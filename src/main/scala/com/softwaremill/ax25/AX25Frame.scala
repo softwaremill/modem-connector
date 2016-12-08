@@ -5,6 +5,10 @@ class AX25Frame(val sender: AX25Callsign, val dest: AX25Callsign,
                 val ctl: Byte,
                 val pid: Option[Byte],
                 val body: Array[Byte]) {
+
+  override def toString: String = super.toString
+
+  def toBytes: Array[Byte] = ???
 }
 
 object AX25Frame {
@@ -51,8 +55,4 @@ object AX25Frame {
     val dataPos: Int = pidOptPos + pidOpt.nonEmpty
     new AX25Frame(sender, dest, digipeaters.toArray, ctl, pidOpt, data.slice(dataPos, data.length))
   }
-
-  override def toString: String = super.toString
-
-  def toBytes: Array[Byte] = ???
 }
