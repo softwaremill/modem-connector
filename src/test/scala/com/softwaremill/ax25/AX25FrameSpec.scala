@@ -3,7 +3,6 @@ package com.softwaremill.ax25
 import java.io.{DataInputStream, File, FileInputStream}
 
 import com.softwaremill.agwpe.AGWPEFrame
-import com.softwaremill.ax25.AX25Frame
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 class AX25FrameSpec extends FlatSpec with Matchers with BeforeAndAfter {

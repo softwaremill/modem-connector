@@ -1,19 +1,30 @@
 package com.softwaremill.agwpe
 
 import java.net.{InetSocketAddress, Socket}
-import java.util.concurrent.BlockingQueue
+import java.util.concurrent.{BlockingQueue, LinkedBlockingQueue}
+
+import com.softwaremill.ax25.AX25Frame
+import com.softwaremill.service.{AGWPEFrameConsumer, FrameObserver}
 
 
-class AGWPEConnector(queue: BlockingQueue[AGWPEFrame]) {
+class AGWPEConnector(val host: String = AGWPESettings.host, val port: Int = AGWPESettings.port, val timeout: Int = AGWPESettings.timeout) {
 
-  def open(): Unit = {
+  val queue: BlockingQueue[AGWPEFrame] = new LinkedBlockingQueue[AGWPEFrame]
+
+  def startConnection(ax25FrameObservers: Seq[FrameObserver[AX25Frame]]): Unit = {
     val sockToAGWPE: Socket = new Socket
     sockToAGWPE.setSoLinger(false, 1)
-    sockToAGWPE.connect(new InetSocketAddress(AGWPESettings.host, AGWPESettings.port), AGWPESettings.timeout)
-    val listener2: AGWPEFrameProducer = new AGWPEFrameProducer(sockToAGWPE, queue)
+    sockToAGWPE.connect(new InetSocketAddress(host, port), timeout)
+    val agwpeProducer: AGWPEFrameProducer = new AGWPEFrameProducer(sockToAGWPE, queue)
+    val agwpeConsumer: AGWPEFrameConsumer = new AGWPEFrameConsumer(queue)
 
-    val t2: Thread = new Thread(listener2, "AGWPEConnector[" + AGWPESettings.host + ':' + AGWPESettings.port + ']')
-    t2.setDaemon(false)
+    ax25FrameObservers.foreach(agwpeConsumer.addObserver)
+
+    val t1: Thread = new Thread(agwpeConsumer)
+    val t2: Thread = new Thread(agwpeProducer)
+    t1.start()
     t2.start()
   }
+
+  def sendAx25Frame(frame: AX25Frame): Unit = ???
 }
