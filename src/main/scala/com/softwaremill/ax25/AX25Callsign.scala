@@ -1,6 +1,13 @@
 package com.softwaremill.ax25
 
 class AX25Callsign(val callsign: String, val h_c: Boolean, val reserved: Byte, val ssid: Byte, val last: Boolean){
+
+  def toBytes: Array[Byte] = {
+    val callsignBytes: Array[Byte] = callsign.map(ch => ((ch.toInt & 0x7F) << 1).toByte).toArray
+    val padding: Array[Byte] = Array.fill(AX25Callsign.CallsignSize - callsign.length)(0x40.toByte)
+    val flag: Byte = ((ssid << 1) | ((reserved & 3) << 5) | (if (h_c) 0x80 else 0) | (if (last) 1 else 0)).toByte
+    (callsignBytes ++ padding).take(AX25Callsign.CallsignSize) ++ Array(flag)
+  }
 }
 
 object AX25Callsign {
