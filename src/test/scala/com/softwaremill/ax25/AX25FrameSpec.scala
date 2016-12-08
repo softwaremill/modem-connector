@@ -23,6 +23,13 @@ class AX25FrameSpec extends FlatSpec with Matchers with BeforeAndAfter {
     ax24frame.dest.callsign should equal("APRS")
   }
 
+  "An AX25Frame" should "encode byte array" in {
+    val ax24frame = AX25Frame(ax25frameFromFile("/andrej.bin").toBytes)
+    new String(ax24frame.body) should equal("=4603.63N/01431.26E-Op. Andrej")
+    ax24frame.dest.callsign should equal("APRS")
+    ax24frame.sender.callsign should equal("S57LN")
+  }
+
   def ax25frameFromFile(filePath: String): AX25Frame = {
     val file: File = new File(this.getClass.getResource(filePath).getPath)
     AX25Frame(AGWPEFrame(new DataInputStream(new FileInputStream(file))).data.get)
