@@ -7,14 +7,14 @@ import com.softwaremill.ax25.AX25Frame
 import com.softwaremill.service.{AGWPEFrameConsumer, FrameObserver}
 
 
-class AGWPEConnector {
+class AGWPEConnector(val host: String = AGWPESettings.host, val port: Int = AGWPESettings.port, val timeout: Int = AGWPESettings.timeout) {
 
   val queue: BlockingQueue[AGWPEFrame] = new LinkedBlockingQueue[AGWPEFrame]
 
   def startConnection(ax25FrameObservers: Seq[FrameObserver[AX25Frame]]): Unit = {
     val sockToAGWPE: Socket = new Socket
     sockToAGWPE.setSoLinger(false, 1)
-    sockToAGWPE.connect(new InetSocketAddress(AGWPESettings.host, AGWPESettings.port), AGWPESettings.timeout)
+    sockToAGWPE.connect(new InetSocketAddress(host, port), timeout)
     val agwpeProducer: AGWPEFrameProducer = new AGWPEFrameProducer(sockToAGWPE, queue)
     val agwpeConsumer: AGWPEFrameConsumer = new AGWPEFrameConsumer(queue)
 
