@@ -12,18 +12,18 @@ class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutpu
 
   val AgwpeFrameEncoding: String = "US-ASCII"
 
-  send(socketOut, AGWPEFrame.versionFrame)
-  send(socketOut, AGWPEFrame.monitorOnFrame)
+  send(AGWPEFrame.versionFrame)
+  send(AGWPEFrame.monitorOnFrame)
 
   override def run(): Unit = {
     logger.info("Starting Producer....")
-    while (true) {
-      try {
+    try {
+      while (true) {
         val frame: AGWPEFrame = AGWPEFrame(socketIn)
         receiveCommand(frame)
-      } catch {
-        case e: Exception => logger.error("Error during AGWPE command reading.", e)
       }
+    } catch {
+      case e: Exception => logger.error("Error during AGWPE command reading.", e)
     }
   }
 
@@ -103,7 +103,7 @@ class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutpu
     queue.put(frame)
   }
 
-  def send(socketOut: DataOutputStream, agwpeFrame: AGWPEFrame): Unit = {
+  def send(agwpeFrame: AGWPEFrame): Unit = {
     this.synchronized {
       agwpeFrame.bytes.foreach(socketOut.write)
     }
@@ -117,6 +117,6 @@ class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutpu
       Some(frame.dest.callsign),
       data.length, 0, Some(data))
 
-    send(socketOut, agwpe)
+    send(agwpe)
   }
 }
