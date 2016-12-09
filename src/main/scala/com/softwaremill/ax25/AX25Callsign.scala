@@ -8,6 +8,9 @@ class AX25Callsign(val callsign: String, val h_c: Boolean, val reserved: Byte, v
     val flag: Byte = ((ssid << 1) | ((reserved & 3) << 5) | (if (h_c) 0x80 else 0) | (if (last) 1 else 0)).toByte
     (callsignBytes ++ padding).take(AX25Callsign.CallsignSize) ++ Array(flag)
   }
+
+  override def toString: String = if (ssid == 0) callsign else callsign + '-' + ssid.toInt
+
 }
 
 object AX25Callsign {
