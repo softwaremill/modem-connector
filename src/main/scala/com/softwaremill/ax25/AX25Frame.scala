@@ -12,6 +12,19 @@ class AX25Frame(val sender: AX25Callsign, val dest: AX25Callsign,
     (Seq(Flag) ++ dest.toBytes ++ sender.toBytes ++ digipeaters.flatMap(_.toBytes) ++ Seq(ctl) ++ pid.toSeq ++ body).toArray
   }
 
+  override def toString: String = {
+    def toHexString(data: Int): String = Integer.toHexString(data & 0xFF)
+
+    val frame: List[String] = List("from=" + sender,
+      "to=" + dest,
+      digipeaters.mkString("digipeaters=[", ", ", "]"),
+      "ctl=" + toHexString(ctl),
+      "pid=" + pid.map(pidValue => toHexString(pidValue)),
+      Option(body).map(b => new String(b)).toString
+    )
+    frame.mkString("AX25Frame[", ", ", "]")
+  }
+
 }
 
 object AX25Frame {
@@ -61,7 +74,5 @@ object AX25Frame {
     val dataPos: Int = pidOptPos + pidOpt.nonEmpty
     new AX25Frame(sender, dest, digipeaters.toArray, ctl, pidOpt, data.slice(dataPos, data.length))
   }
-
-  override def toString: String = super.toString
 
 }
