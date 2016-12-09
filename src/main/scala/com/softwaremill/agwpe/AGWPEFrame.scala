@@ -40,9 +40,9 @@ object AGWPEFrame {
     new AGWPEFrame(0, command, 0, None, None, 0, 0, None)
   }
 
-  def version: AGWPEFrame = valueOf('R')
+  def versionFrame: AGWPEFrame = valueOf('R')
 
-  def monitorOn: AGWPEFrame = valueOf('k')
+  def monitorOnFrame: AGWPEFrame = valueOf('k')
 
   def apply(is: DataInputStream): AGWPEFrame = {
     val port: Int = is.readUnsignedByte() | (is.readUnsignedByte() << 8) | (is.readUnsignedByte() << 16) | (is.readUnsignedByte() << 24)

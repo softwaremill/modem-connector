@@ -1,21 +1,19 @@
 package com.softwaremill.agwpe
 
 import java.io.{DataInputStream, DataOutputStream}
-import java.net.Socket
 import java.util.Date
 import java.util.concurrent.BlockingQueue
 
+import com.softwaremill.ax25.AX25Frame
 import com.typesafe.scalalogging.LazyLogging
 
 
-class AGWPEFrameProducer(socket: Socket, queue: BlockingQueue[AGWPEFrame]) extends Runnable with LazyLogging {
+class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutputStream, queue: BlockingQueue[AGWPEFrame]) extends Runnable with LazyLogging {
 
   val AgwpeFrameEncoding: String = "US-ASCII"
-  val socketIn: DataInputStream = new DataInputStream(socket.getInputStream)
-  val socketOut: DataOutputStream = new DataOutputStream(socket.getOutputStream)
 
-  send(socketOut, AGWPEFrame.version)
-  send(socketOut, AGWPEFrame.monitorOn)
+  send(socketOut, AGWPEFrame.versionFrame)
+  send(socketOut, AGWPEFrame.monitorOnFrame)
 
   override def run(): Unit = {
     logger.info("Starting Producer....")
@@ -109,5 +107,16 @@ class AGWPEFrameProducer(socket: Socket, queue: BlockingQueue[AGWPEFrame]) exten
     this.synchronized {
       agwpeFrame.bytes.foreach(socketOut.write)
     }
+  }
+
+  def sendAx25Frame(frame: AX25Frame): Unit = {
+    val data: Array[Byte] = frame.toBytes
+
+    val agwpe: AGWPEFrame = new AGWPEFrame(0, 'K', frame.pid.map(_.toShort).getOrElse(0),
+      Some(frame.sender.callsign),
+      Some(frame.dest.callsign),
+      data.length, 0, Some(data))
+
+    send(socketOut, agwpe)
   }
 }
