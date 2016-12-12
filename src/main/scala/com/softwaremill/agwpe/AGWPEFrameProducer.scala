@@ -18,11 +18,12 @@ class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutpu
   override def run(): Unit = {
     logger.info("Starting Producer....")
     try {
-      while (true) {
+      while (!Thread.currentThread.isInterrupted) {
         val frame: AGWPEFrame = AGWPEFrame(socketIn)
         receiveCommand(frame)
       }
     } catch {
+      case ie: InterruptedException => logger.info("Producer thread interrupted. Producer stopped")
       case e: Exception => logger.error("Error during AGWPE command reading.", e)
     }
   }
