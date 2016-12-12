@@ -1,5 +1,5 @@
-# pwsat-modem-lib
-Modulator and Demodulator for HAM Radio AX.25 audio signals
+# modem-connector
+A connector library for communicating with modem software (like eg soundmodem) through AGWPE connection. This library allows to listen for received AX.25 frames on the soundmodem as well as to send AX.25 frames up.
 
 ## Running
 
