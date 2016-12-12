@@ -46,7 +46,11 @@ class AGWPEFrameConsumerSpec extends FlatSpec with Matchers with BeforeAndAfter 
 
   def sleep(): Unit = {
     val HalfASecond = 500
-    Thread.sleep(HalfASecond)
+    try {
+      Thread.sleep(HalfASecond)
+    } catch {
+      case ie: InterruptedException =>
+    }
   }
 }
 

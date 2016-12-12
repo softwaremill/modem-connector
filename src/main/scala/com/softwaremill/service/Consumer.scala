@@ -8,9 +8,13 @@ abstract class Consumer[T](queue: BlockingQueue[T]) extends Runnable with LazyLo
 
   override def run(): Unit = {
     logger.info("Starting Consumer....")
-    while (true) {
-      val sample = queue.take()
-      consume(sample)
+    try {
+      while (!Thread.currentThread.isInterrupted) {
+        val sample = queue.take()
+        consume(sample)
+      }
+    } catch {
+      case ie: InterruptedException => logger.info("Consumer stopped with interrupt")
     }
   }
 
