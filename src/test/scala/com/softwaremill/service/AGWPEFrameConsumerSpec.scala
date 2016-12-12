@@ -14,7 +14,7 @@ class AGWPEFrameConsumerSpec extends FlatSpec with Matchers with BeforeAndAfter 
     //given
     val queue: BlockingQueue[AGWPEFrame] = new LinkedBlockingQueue[AGWPEFrame]
     val consumer: AGWPEFrameConsumer = new AGWPEFrameConsumer(queue)
-    val observer: TestObserver = new TestObserver
+    val observer: TestConsumerObserver = new TestConsumerObserver
     consumer.addObserver(observer)
     val dis: DataInputStream = FrameUtils.dataStream("/dataFrame.bin")
     val frame: AGWPEFrame = AGWPEFrame(dis)
@@ -30,7 +30,7 @@ class AGWPEFrameConsumerSpec extends FlatSpec with Matchers with BeforeAndAfter 
     val consumer: AGWPEFrameConsumer = new AGWPEFrameConsumer(queue)
     val dis: DataInputStream = FrameUtils.dataStream("/dataFrame.bin")
     val frame: AGWPEFrame = AGWPEFrame(dis)
-    val observer: TestObserver = new TestObserver
+    val observer: TestConsumerObserver = new TestConsumerObserver
     consumer.addObserver(observer)
     val thread: Thread = new Thread(consumer)
     //when
@@ -54,7 +54,7 @@ class AGWPEFrameConsumerSpec extends FlatSpec with Matchers with BeforeAndAfter 
   }
 }
 
-class TestObserver extends Observer[AX25Frame] {
+class TestConsumerObserver extends Observer[AX25Frame] {
   var observerCalled: Boolean = false
 
   override def receiveUpdate(subject: AX25Frame): Unit = {
