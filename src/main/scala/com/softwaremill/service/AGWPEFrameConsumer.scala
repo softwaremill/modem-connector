@@ -5,7 +5,7 @@ import java.util.concurrent.BlockingQueue
 import com.softwaremill.agwpe.AGWPEFrame
 import com.softwaremill.ax25.AX25Frame
 
-class AGWPEFrameConsumer(queue: BlockingQueue[AGWPEFrame]) extends Consumer(queue) with Subject[AX25Frame] {
+class AGWPEFrameConsumer(queue: BlockingQueue[AGWPEFrame], descrambler: Option[Descrambler] = None) extends Consumer(queue) with Subject[AX25Frame] {
 
   override def consume(agwpe: AGWPEFrame): Unit = {
     val ax25frame: AX25Frame = prepareAX25Frame(agwpe)
@@ -13,6 +13,9 @@ class AGWPEFrameConsumer(queue: BlockingQueue[AGWPEFrame]) extends Consumer(queu
   }
 
   private def prepareAX25Frame(agwpe: AGWPEFrame): AX25Frame = {
-    AX25Frame(agwpe.data.get)
+    descrambler match {
+      case Some(ds) => AX25Frame(ds.descramble(agwpe.data.get))
+      case None => AX25Frame(agwpe.data.get)
+    }
   }
 }
