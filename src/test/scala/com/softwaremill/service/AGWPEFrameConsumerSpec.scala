@@ -54,7 +54,7 @@ class AGWPEFrameConsumerSpec extends FlatSpec with Matchers with BeforeAndAfter 
   }
 }
 
-class TestObserver extends FrameObserver[AX25Frame] {
+class TestObserver extends Observer[AX25Frame] {
   var observerCalled: Boolean = false
 
   override def receiveUpdate(subject: AX25Frame): Unit = {

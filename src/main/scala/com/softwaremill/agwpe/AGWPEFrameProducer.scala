@@ -5,10 +5,12 @@ import java.util.Date
 import java.util.concurrent.BlockingQueue
 
 import com.softwaremill.ax25.AX25Frame
+import com.softwaremill.service.Subject
 import com.typesafe.scalalogging.LazyLogging
 
 
-class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutputStream, queue: BlockingQueue[AGWPEFrame]) extends Runnable with LazyLogging {
+class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutputStream, queue: BlockingQueue[AGWPEFrame])
+  extends Runnable with Subject[ServiceMessage] with LazyLogging {
 
   val AgwpeFrameEncoding: String = "US-ASCII"
 
@@ -81,13 +83,17 @@ class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutpu
   }
 
   private def handleConnectStatusCommand(frame: AGWPEFrame): Unit = {
-    logger.info(new Date().toString + ": AGWPE port#" + frame.port +
-      " connect to " + frame.callFrom + ": " + new String(frame.data.get, 0, frame.dataLength, AgwpeFrameEncoding))
+    val connectStatus: String = new Date().toString + ": AGWPE port#" + frame.port +
+      " connect to " + frame.callFrom + ": " + new String(frame.data.get, 0, frame.dataLength, AgwpeFrameEncoding)
+    logger.info(connectStatus)
+    notifyObservers(ServiceMessage(ServiceMessage.ConnectStatus, connectStatus))
   }
 
   private def handleDisconnectStatusCommand(frame: AGWPEFrame): Unit = {
-    logger.info(new Date().toString + ": AGWPE port#" + frame.port +
-      " disconnect from " + frame.callFrom + ": " + new String(frame.data.get, 0, frame.dataLength, AgwpeFrameEncoding))
+    val disconnectStatus: String = new Date().toString + ": AGWPE port#" + frame.port +
+      " disconnect from " + frame.callFrom + ": " + new String(frame.data.get, 0, frame.dataLength, AgwpeFrameEncoding)
+    logger.info(disconnectStatus)
+    notifyObservers(ServiceMessage(ServiceMessage.DisconnectStatus, disconnectStatus))
   }
 
   //noinspection ScalaStyle
@@ -97,7 +103,9 @@ class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutpu
       ((data(2) & 0xFF) << 16) | ((data(3) & 0xFF) << 24)
     val minorVersion: Int = (data(4) & 0xFF) | ((data(5) & 0xFF) << 8) |
       ((data(6) & 0xFF) << 16) | ((data(7) & 0xFF) << 24)
-    logger.info("AGWPE version " + majorVersion + '.' + minorVersion)
+    val version: String = (majorVersion + '.' + minorVersion).toString
+    logger.info("AGWPE version " + version)
+    notifyObservers(ServiceMessage(ServiceMessage.Version, version))
   }
 
   private def handleRawAX25FrameCommand(frame: AGWPEFrame): Unit = {
