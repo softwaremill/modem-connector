@@ -5,11 +5,14 @@ import java.net.{InetSocketAddress, Socket}
 import java.util.concurrent.{BlockingQueue, LinkedBlockingQueue}
 
 import com.softwaremill.ax25.AX25Frame
-import com.softwaremill.service.{AGWPEFrameConsumer, FrameObserver}
+import com.softwaremill.service.{AGWPEFrameConsumer, Descrambler, FrameObserver}
 import com.typesafe.scalalogging.LazyLogging
 
 
-class AGWPEConnector(val host: String = AGWPESettings.host, val port: Int = AGWPESettings.port, val timeout: Int = AGWPESettings.timeout) extends LazyLogging {
+class AGWPEConnector(val host: String = AGWPESettings.host,
+                     val port: Int = AGWPESettings.port,
+                     val timeout: Int = AGWPESettings.timeout,
+                     val descramblerOpt: Option[Descrambler] = None) extends LazyLogging {
 
   val MaxInactivityMSecs: Long = 30000L
   var lastFrameRcvTime: Long = 0
@@ -20,7 +23,7 @@ class AGWPEConnector(val host: String = AGWPESettings.host, val port: Int = AGWP
   val socketIn: DataInputStream = new DataInputStream(sockToAGWPE.getInputStream)
   val socketOut: DataOutputStream = new DataOutputStream(sockToAGWPE.getOutputStream)
   val agwpeProducer: AGWPEFrameProducer = new AGWPEFrameProducer(socketIn, socketOut, queue)
-  val agwpeConsumer: AGWPEFrameConsumer = new AGWPEFrameConsumer(queue)
+  val agwpeConsumer: AGWPEFrameConsumer = new AGWPEFrameConsumer(queue, descramblerOpt)
 
   val timer = new java.util.Timer()
 
