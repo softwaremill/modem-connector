@@ -5,8 +5,9 @@ import com.softwaremill.ax25.AX25Frame
 import com.softwaremill.service.Observer
 
 object ApplicationMain extends App {
-  val connector: AGWPEConnector = new AGWPEConnector
+  val connector: AGWPEConnector = new AGWPEConnector()
   val observer: PrintLineAX25Observer = new PrintLineAX25Observer
+  connector.addAX25MessageObserver(observer)
   connector.startConnection()
 }
 
