@@ -12,7 +12,7 @@ AGWPE Frames are sent over the communication channel between the library itself 
 port and host needs to be provided either through configuration file, runtime flags or constructor injection.
 
 AGWPE frame is characterized by its command type (single lower/upper case letter) and its payload. The library focuses mainly on 
-sending and receiving AX.25 Row data frames and supports only a couple additional commands.
+sending and receiving AX.25 Row data frames and supports only a couple of additional commands.
 
 When AX.25 frame is received on the SoundModem, the AGWPE frame is sent over to the Modem-Connector library, the payload of this
 AGWPE frame is the raw AX.25 frame. The Ax.25 frame gets extracted and its passed over to the subscribed listeners.
@@ -72,6 +72,16 @@ override def receiveUpdate(message: ServiceMessage): Unit = {
 }
 
 ```
+
+### Sending AX.25 Frames over to AGWPE Enabled Modem (SoundModem)
+
+*connector* object (AGWPEConnector) created at the beggining is a single entry point for modem communication, to send the AX.25
+message over to SoundModem the following method exposed by *connector* needs to be executed:
+
+```scala
+  def sendAx25Frame(frame: AX25Frame): Unit
+```
+
 
 ## Running
 
