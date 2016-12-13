@@ -62,6 +62,7 @@ class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutpu
     */
   //noinspection ScalaStyle
   def receiveCommand(frame: AGWPEFrame): Unit = {
+    // scalastyle:off cyclomatic.complexity
     logger.info("Command code received: " + frame.command)
     frame.command match {
       case 'C' => handleConnectStatusCommand(frame)
@@ -80,6 +81,7 @@ class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutpu
       case 'U' => logger.info("Received AX.25 frame in monitor format - Not Implemented")
       case _ => logger.error("Unknown command received in AGWPE Handler")
     }
+    // scalastyle:on cyclomatic.complexity
   }
 
   private def handleConnectStatusCommand(frame: AGWPEFrame): Unit = {

@@ -12,6 +12,8 @@ object ApplicationMain extends App {
 
 class PrintLineAX25Observer extends Observer[AX25Frame] {
   override def receiveUpdate(subject: AX25Frame): Unit = {
+    // scalastyle:off regex
     println(subject)
+    // scalastyle:on regex
   }
 }
