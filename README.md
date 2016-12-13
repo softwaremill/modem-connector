@@ -1,3 +1,5 @@
+![alt tag](http://52.28.22.127:8080/job/modem-connector/badge/icon)
+
 # modem-connector
 A connector library for communicating with modem software (like eg soundmodem) through AGWPE connection. This library allows to listen for received AX.25 frames on the soundmodem as well as to send AX.25 frames up.
 
