@@ -99,10 +99,12 @@ class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutpu
   //noinspection ScalaStyle
   private def handleVersionCommand(frame: AGWPEFrame): Unit = {
     val data: Array[Byte] = frame.data.get
+    // scalastyle:off magic.number
     val majorVersion: Int = (data(0) & 0xFF) | ((data(1) & 0xFF) << 8) |
       ((data(2) & 0xFF) << 16) | ((data(3) & 0xFF) << 24)
     val minorVersion: Int = (data(4) & 0xFF) | ((data(5) & 0xFF) << 8) |
       ((data(6) & 0xFF) << 16) | ((data(7) & 0xFF) << 24)
+    // scalastyle:on magic.number
     val version: String = (majorVersion + '.' + minorVersion).toString
     logger.info("AGWPE version " + version)
     notifyObservers(ServiceMessage(ServiceMessage.Version, version))
