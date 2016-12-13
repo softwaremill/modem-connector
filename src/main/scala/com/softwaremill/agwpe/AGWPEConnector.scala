@@ -5,7 +5,7 @@ import java.net.{InetSocketAddress, Socket}
 import java.util.concurrent.{BlockingQueue, LinkedBlockingQueue}
 
 import com.softwaremill.ax25.AX25Frame
-import com.softwaremill.service.{AGWPEFrameConsumer, Descrambler, FrameObserver}
+import com.softwaremill.service.{AGWPEFrameConsumer, Descrambler, Observer}
 import com.typesafe.scalalogging.LazyLogging
 
 
@@ -48,14 +48,21 @@ class AGWPEConnector(val host: String = AGWPESettings.host,
     sockToAGWPE
   }
 
-  def startConnection(ax25FrameObservers: Seq[FrameObserver[AX25Frame]]): Unit = {
+  def startConnection(): Unit = {
     lastFrameRcvTime = System.currentTimeMillis()
     timer.scheduleAtFixedRate(inactivityMonitor, MaxInactivityMSecs, MaxInactivityMSecs)
-    ax25FrameObservers.foreach(agwpeConsumer.addObserver)
     val consumerThread: Thread = new Thread(agwpeConsumer)
     val producerThread: Thread = new Thread(agwpeProducer)
     consumerThread.start()
     producerThread.start()
+  }
+
+  def addAX25MessageObserver(observer: Observer[AX25Frame]): Unit = {
+    agwpeConsumer.addObserver(observer)
+  }
+
+  def addServiceMessageObserver(observer: Observer[ServiceMessage]): Unit = {
+    agwpeProducer.addObserver(observer)
   }
 
   def sendAx25Frame(frame: AX25Frame): Unit = {
