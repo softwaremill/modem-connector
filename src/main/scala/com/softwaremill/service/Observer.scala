@@ -1,6 +1,6 @@
 package com.softwaremill.service
 
-trait FrameObserver[S] {
+trait Observer[S] {
   def receiveUpdate(subject: S)
 }
 

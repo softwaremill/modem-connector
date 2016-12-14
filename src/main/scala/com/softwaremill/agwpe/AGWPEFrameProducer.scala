@@ -5,10 +5,12 @@ import java.util.Date
 import java.util.concurrent.BlockingQueue
 
 import com.softwaremill.ax25.AX25Frame
+import com.softwaremill.service.Subject
 import com.typesafe.scalalogging.LazyLogging
 
 
-class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutputStream, queue: BlockingQueue[AGWPEFrame]) extends Runnable with LazyLogging {
+class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutputStream, queue: BlockingQueue[AGWPEFrame])
+  extends Runnable with Subject[ServiceMessage] with LazyLogging {
 
   val AgwpeFrameEncoding: String = "US-ASCII"
 
@@ -60,6 +62,7 @@ class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutpu
     */
   //noinspection ScalaStyle
   def receiveCommand(frame: AGWPEFrame): Unit = {
+    // scalastyle:off cyclomatic.complexity
     logger.info("Command code received: " + frame.command)
     frame.command match {
       case 'C' => handleConnectStatusCommand(frame)
@@ -78,26 +81,35 @@ class AGWPEFrameProducer(val socketIn: DataInputStream, val socketOut: DataOutpu
       case 'U' => logger.info("Received AX.25 frame in monitor format - Not Implemented")
       case _ => logger.error("Unknown command received in AGWPE Handler")
     }
+    // scalastyle:on cyclomatic.complexity
   }
 
   private def handleConnectStatusCommand(frame: AGWPEFrame): Unit = {
-    logger.info(new Date().toString + ": AGWPE port#" + frame.port +
-      " connect to " + frame.callFrom + ": " + new String(frame.data.get, 0, frame.dataLength, AgwpeFrameEncoding))
+    val connectStatus: String = new Date().toString + ": AGWPE port#" + frame.port +
+      " connect to " + frame.callFrom + ": " + new String(frame.data.get, 0, frame.dataLength, AgwpeFrameEncoding)
+    logger.info(connectStatus)
+    notifyObservers(ServiceMessage(ServiceMessage.ConnectStatus, connectStatus))
   }
 
   private def handleDisconnectStatusCommand(frame: AGWPEFrame): Unit = {
-    logger.info(new Date().toString + ": AGWPE port#" + frame.port +
-      " disconnect from " + frame.callFrom + ": " + new String(frame.data.get, 0, frame.dataLength, AgwpeFrameEncoding))
+    val disconnectStatus: String = new Date().toString + ": AGWPE port#" + frame.port +
+      " disconnect from " + frame.callFrom + ": " + new String(frame.data.get, 0, frame.dataLength, AgwpeFrameEncoding)
+    logger.info(disconnectStatus)
+    notifyObservers(ServiceMessage(ServiceMessage.DisconnectStatus, disconnectStatus))
   }
 
   //noinspection ScalaStyle
   private def handleVersionCommand(frame: AGWPEFrame): Unit = {
     val data: Array[Byte] = frame.data.get
+    // scalastyle:off magic.number
     val majorVersion: Int = (data(0) & 0xFF) | ((data(1) & 0xFF) << 8) |
       ((data(2) & 0xFF) << 16) | ((data(3) & 0xFF) << 24)
     val minorVersion: Int = (data(4) & 0xFF) | ((data(5) & 0xFF) << 8) |
       ((data(6) & 0xFF) << 16) | ((data(7) & 0xFF) << 24)
-    logger.info("AGWPE version " + majorVersion + '.' + minorVersion)
+    // scalastyle:on magic.number
+    val version: String = (majorVersion + '.' + minorVersion).toString
+    logger.info("AGWPE version " + version)
+    notifyObservers(ServiceMessage(ServiceMessage.Version, version))
   }
 
   private def handleRawAX25FrameCommand(frame: AGWPEFrame): Unit = {
