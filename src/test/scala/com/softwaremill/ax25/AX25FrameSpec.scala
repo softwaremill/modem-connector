@@ -28,5 +28,13 @@ class AX25FrameSpec extends FlatSpec with Matchers with BeforeAndAfter {
     ax24frame.sender.callsign should equal("S57LN")
   }
 
+  "An AX25Frame" should "contain digipiters" in {
+    val ax24frame = FrameUtils.ax25frameFromFile("/complexFrame.bin")
+    ax24frame.digipeaters.map(_.toString).toSeq should contain theSameElementsInOrderAs List("OZ6DIA-2", "OZ4DIA-2", "OZ4DIE-2")
+    ax24frame.dest.toString should equal("U4TQ33")
+    ax24frame.sender.toString should equal("OZ1IEP-9")
+    new String(ax24frame.body) should equal("`'4< \\4>/]\"3k}145.500MHz qrv her=\r")
+  }
+
 
 }

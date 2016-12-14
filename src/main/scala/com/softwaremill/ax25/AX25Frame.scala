@@ -38,16 +38,12 @@ object AX25Frame {
     val senderPos: Int = Offset + CallsignSize
     val sender: AX25Callsign = callsign(senderPos)
 
-    def retriveDigipeaters(offset: Int, digipeaters: List[AX25Callsign]): List[AX25Callsign] = {
-      if ((data(offset - 1) & 0x01) == 0) {
-        retriveDigipeaters(offset + CallsignSize, digipeaters) ++ digipeaters
-      } else {
-        digipeaters
-      }
+    def retriveDigipeaters(offset: Int): List[AX25Callsign] = {
+      if ((data(offset - 1) & 0x01) == 0) callsign(offset) :: retriveDigipeaters(offset + CallsignSize) else Nil
     }
 
     val digipeatersPos: Int = senderPos + CallsignSize
-    val digipeaters: List[AX25Callsign] = retriveDigipeaters(digipeatersPos, List.empty)
+    val digipeaters: List[AX25Callsign] = retriveDigipeaters(digipeatersPos)
 
     val ctlPos: Int = digipeatersPos + digipeaters.size * CallsignSize
     val ctl: Byte = data(ctlPos)
@@ -61,7 +57,7 @@ object AX25Frame {
     }
 
     val pidOptPos: Int = ctlPos + 1
-    val pidOpt: Option[Byte] = pid(Offset + 2 * CallsignSize + digipeaters.size * Offset + 1)
+    val pidOpt: Option[Byte] = pid(pidOptPos)
 
     implicit def bool2int(b: Boolean) = if (b) 1 else 0
 
