@@ -1,4 +1,4 @@
-[Softwaremill](http://softwaremill.com "Softwaremill") Build Server Status: [![Build Status](http://52.28.22.127:8080/buildStatus/icon?job=modem-connector)](http://52.28.22.127:8080/job/modem-connector)
+[![Build Status](http://52.28.22.127:8080/buildStatus/icon?job=modem-connector)](http://52.28.22.127:8080/job/modem-connector) [Softwaremill](http://softwaremill.com "Softwaremill") Build Server Status
 # modem-connector
 A connector library for communicating with modem software (like eg soundmodem [UZ7HO SoundModem](http://uz7.ho.ua/packetradio.htm "UZ7HO SoundModem")) through AGWPE connection. 
 This library allows to listen for received AX.25 frames on the soundmodem as well as to send AX.25 frames up.
