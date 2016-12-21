@@ -1,8 +1,7 @@
-package com.softwaremill
+package com.softwaremill.modemconnector
 
-import com.softwaremill.agwpe.AGWPEConnector
-import com.softwaremill.ax25.AX25Frame
-import com.softwaremill.service.Observer
+import com.softwaremill.modemconnector.agwpe.AGWPEConnector
+import com.softwaremill.modemconnector.ax25.AX25Frame
 
 object ApplicationMain extends App {
   val connector: AGWPEConnector = new AGWPEConnector()

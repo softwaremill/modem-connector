@@ -1,8 +1,8 @@
-package com.softwaremill.agwpe
+package com.softwaremill.modemconnector.agwpe
 
 import java.io.{DataInputStream, File, FileInputStream}
 
-import com.softwaremill.FrameUtils
+import com.softwaremill.modemconnector.FrameUtils
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 class AGWPEFrameSpec extends FlatSpec with Matchers with BeforeAndAfter {

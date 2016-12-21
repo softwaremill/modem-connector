@@ -1,6 +1,6 @@
-package com.softwaremill.ax25
+package com.softwaremill.modemconnector.ax25
 
-import com.softwaremill.FrameUtils
+import com.softwaremill.modemconnector.FrameUtils
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 class AX25FrameSpec extends FlatSpec with Matchers with BeforeAndAfter {

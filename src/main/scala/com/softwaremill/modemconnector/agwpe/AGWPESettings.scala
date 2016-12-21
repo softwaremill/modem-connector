@@ -1,4 +1,4 @@
-package com.softwaremill.agwpe
+package com.softwaremill.modemconnector.agwpe
 
 import com.typesafe.config.ConfigFactory
 
