@@ -1,12 +1,13 @@
 import sbt._
 import Dependencies._
 
-  val ScalaVersion = "2.11.8"
+  val ScalaVersion = "2.12.1"
 
   lazy val commonSettings = Seq(
     organization := "com.softwaremill.modem-connector",
     version := "0.1.0-SNAPSHOT",
-    scalaVersion := "2.11.8",
+    crossScalaVersions := Seq("2.11.8", "2.12.1"),
+    scalaVersion := ScalaVersion,
     resolvers ++= commonResolvers,
     // Sonatype OSS deployment
     publishTo := {
@@ -17,7 +18,6 @@ import Dependencies._
         Some("releases" at nexus + "service/local/staging/deploy/maven2")
       }
     },
-    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     publishMavenStyle := true,
     publishArtifact in Test := false,
     pomIncludeRepository := { _ => false },
@@ -36,8 +36,8 @@ import Dependencies._
             <name>Tomasz Luczak</name>
           </developer>
         </developers>,
-    licenses      := ("Apache2", new java.net.URL("http://www.apache.org/licenses/LICENSE-2.0.txt")) :: Nil,
-    homepage      := Some(new java.net.URL("http://www.softwaremill.com"))
+    licenses := ("Apache2", new java.net.URL("http://www.apache.org/licenses/LICENSE-2.0.txt")) :: Nil,
+    homepage := Some(new java.net.URL("http://www.softwaremill.com"))
   ) ++ Revolver.settings
 
   lazy val root = (project in file("."))
@@ -47,8 +47,6 @@ import Dependencies._
       scalaSource in Compile := baseDirectory.value / "src/main/scala",
       scalaSource in Test := baseDirectory.value / "src/test/scala",
       libraryDependencies ++= coreDependencies ++ testDependencies,
-      mainClass in Compile := Some("com.softwaremill.ApplicationMain"),
-      assemblyJarName in assembly := "pwsat-modem-lib.jar",
       fork := true
     )
 
