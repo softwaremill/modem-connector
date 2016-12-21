@@ -1,4 +1,4 @@
-package com.softwaremill.service
+package com.softwaremill.modemconnector
 
 trait Subject[S] {
   private var observers: List[Observer[S]] = Nil

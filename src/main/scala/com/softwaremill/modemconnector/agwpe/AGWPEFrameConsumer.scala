@@ -1,9 +1,9 @@
-package com.softwaremill.service
+package com.softwaremill.modemconnector.agwpe
 
 import java.util.concurrent.BlockingQueue
 
-import com.softwaremill.agwpe.AGWPEFrame
-import com.softwaremill.ax25.AX25Frame
+import com.softwaremill.modemconnector.ax25.AX25Frame
+import com.softwaremill.modemconnector.{Consumer, Descrambler, Subject}
 
 class AGWPEFrameConsumer(queue: BlockingQueue[AGWPEFrame], descrambler: Option[Descrambler] = None) extends Consumer(queue) with Subject[AX25Frame] {
 

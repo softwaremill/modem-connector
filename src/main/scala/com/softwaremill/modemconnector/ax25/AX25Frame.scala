@@ -1,4 +1,4 @@
-package com.softwaremill.ax25
+package com.softwaremill.modemconnector.ax25
 
 class AX25Frame(val sender: AX25Callsign, val dest: AX25Callsign,
                 val digipeaters: Array[AX25Callsign],

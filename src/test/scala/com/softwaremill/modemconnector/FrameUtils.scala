@@ -1,9 +1,9 @@
-package com.softwaremill
+package com.softwaremill.modemconnector
 
 import java.io.{DataInputStream, File, FileInputStream}
 
-import com.softwaremill.agwpe.AGWPEFrame
-import com.softwaremill.ax25.AX25Frame
+import com.softwaremill.modemconnector.agwpe.AGWPEFrame
+import com.softwaremill.modemconnector.ax25.AX25Frame
 
 object FrameUtils {
 

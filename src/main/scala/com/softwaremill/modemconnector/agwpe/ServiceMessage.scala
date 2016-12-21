@@ -1,6 +1,6 @@
-package com.softwaremill.agwpe
+package com.softwaremill.modemconnector.agwpe
 
-import com.softwaremill.agwpe.ServiceMessage.ServiceMessageType
+import ServiceMessage.ServiceMessageType
 
 case class ServiceMessage(messageType: ServiceMessageType, content: String)
 

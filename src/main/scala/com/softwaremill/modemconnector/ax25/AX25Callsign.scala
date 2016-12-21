@@ -1,4 +1,4 @@
-package com.softwaremill.ax25
+package com.softwaremill.modemconnector.ax25
 
 class AX25Callsign(val callsign: String, val h_c: Boolean, val reserved: Byte, val ssid: Byte, val last: Boolean) {
 

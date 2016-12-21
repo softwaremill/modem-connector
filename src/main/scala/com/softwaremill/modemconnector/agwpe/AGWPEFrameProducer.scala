@@ -1,11 +1,11 @@
-package com.softwaremill.agwpe
+package com.softwaremill.modemconnector.agwpe
 
 import java.io.{DataInputStream, DataOutputStream}
 import java.util.Date
 import java.util.concurrent.BlockingQueue
 
-import com.softwaremill.ax25.AX25Frame
-import com.softwaremill.service.Subject
+import com.softwaremill.modemconnector.ax25.AX25Frame
+import com.softwaremill.modemconnector.Subject
 import com.typesafe.scalalogging.LazyLogging
 
 

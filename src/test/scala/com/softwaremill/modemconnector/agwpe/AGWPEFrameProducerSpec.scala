@@ -1,11 +1,10 @@
-package com.softwaremill.agwpe
+package com.softwaremill.modemconnector.agwpe
 
 import java.io._
 import java.util.concurrent.{BlockingQueue, LinkedBlockingQueue}
 
-import com.softwaremill.FrameUtils
-import com.softwaremill.ax25.AX25Frame
-import com.softwaremill.service.Observer
+import com.softwaremill.modemconnector.{FrameUtils, Observer}
+import com.softwaremill.modemconnector.ax25.AX25Frame
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
 
 class AGWPEFrameProducerSpec extends FlatSpec with Matchers with BeforeAndAfter {

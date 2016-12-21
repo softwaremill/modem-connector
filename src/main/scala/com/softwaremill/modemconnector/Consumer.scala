@@ -1,4 +1,4 @@
-package com.softwaremill.service
+package com.softwaremill.modemconnector
 
 import java.util.concurrent.BlockingQueue
 

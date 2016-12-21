@@ -1,28 +1,57 @@
 import sbt._
-import sbt.Keys._
-
-def haltOnCmdResultError(result: => Int) = if (result != 0) {
-  throw new Exception("Build failed.")
-}
-
 import Dependencies._
 
-lazy val commonSettings = Seq(
-  organization := "com.softwaremill",
-  version := "0.0.1-SNAPSHOT",
-  scalaVersion := "2.11.8",
-  resolvers ++= commonResolvers
-) ++ Revolver.settings
+  val ScalaVersion = "2.11.8"
 
+  lazy val commonSettings = Seq(
+    organization := "com.softwaremill.modem-connector",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := "2.11.8",
+    resolvers ++= commonResolvers,
+    // Sonatype OSS deployment
+    publishTo := {
+      val nexus = "https://oss.sonatype.org/"
+      if (version.value.trim.endsWith("SNAPSHOT")) {
+        Some("snapshots" at nexus + "content/repositories/snapshots")
+      } else {
+        Some("releases" at nexus + "service/local/staging/deploy/maven2")
+      }
+    },
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
+    publishMavenStyle := true,
+    publishArtifact in Test := false,
+    pomIncludeRepository := { _ => false },
+    pomExtra :=
+      <scm>
+        <url>https://github.com/softwaremill/modem-connector.git</url>
+        <connection>scm:git:git@github.com:softwaremill/modem-connector.git</connection>
+      </scm>
+        <developers>
+          <developer>
+            <id>softberries</id>
+            <name>Krzysztof Grajek</name>
+          </developer>
+          <developer>
+            <id>tkluczak</id>
+            <name>Tomasz Luczak</name>
+          </developer>
+        </developers>,
+    licenses      := ("Apache2", new java.net.URL("http://www.apache.org/licenses/LICENSE-2.0.txt")) :: Nil,
+    homepage      := Some(new java.net.URL("http://www.softwaremill.com"))
+  ) ++ Revolver.settings
 
-lazy val root = (project in file("."))
-  .settings(commonSettings: _*)
-  .settings(
-    name := "pwsat-modem",
-    scalaSource in Compile := baseDirectory.value / "src/main/scala",
-    scalaSource in Test := baseDirectory.value / "src/test/scala",
-    libraryDependencies ++= coreDependencies ++ testDependencies,
-    mainClass in Compile := Some("com.softwaremill.ApplicationMain"),
-    assemblyJarName in assembly := "pwsat-modem-lib.jar",
-    fork := true
-  )
+  lazy val root = (project in file("."))
+    .settings(commonSettings: _*)
+    .settings(
+      name := "modem-connector",
+      scalaSource in Compile := baseDirectory.value / "src/main/scala",
+      scalaSource in Test := baseDirectory.value / "src/test/scala",
+      libraryDependencies ++= coreDependencies ++ testDependencies,
+      mainClass in Compile := Some("com.softwaremill.ApplicationMain"),
+      assemblyJarName in assembly := "pwsat-modem-lib.jar",
+      fork := true
+    )
+
+  def haltOnCmdResultError(result: => Int) = if (result != 0) {
+    throw new Exception("Build failed.")
+  }
